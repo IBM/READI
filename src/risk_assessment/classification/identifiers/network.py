@@ -77,7 +77,6 @@ class IP(Identifier):
         self.allow_double_colon: bool = allow_double_colon
 
     def is_of_this_type(self, text: str) -> bool:
-
         return IP._ipv4.is_of_this_type(text) or IP._ipv6.is_of_this_type(text, self.allow_double_colon)
 
 
