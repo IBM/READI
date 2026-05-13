@@ -1,6 +1,6 @@
-import importlib.resources
 from ipaddress import AddressValueError, IPv4Address, IPv6Address
 from logging import getLogger
+from pathlib import Path
 from typing import Final
 from urllib.parse import quote, urlparse
 
@@ -16,8 +16,7 @@ def _valid_characters(text: str | None) -> bool:
 
 
 def _load_known_schemas() -> list[str]:
-    ref = importlib.resources.files(__package__).joinpath("data/common/uri-schemes-1.csv")
-    with ref.open("r") as input:
+    with (Path(__file__).parent / "data" / "common" / "uri-schemes-1.csv").open("r") as input:
         return [line.split(",")[0] for line in input if len(line.strip())]
 
 

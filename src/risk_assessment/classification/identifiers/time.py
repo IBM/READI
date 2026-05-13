@@ -1,5 +1,5 @@
-import importlib.resources
 from collections.abc import Iterable
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import DictionaryIdentifier
 
@@ -29,8 +29,7 @@ class DayOfTheWeek(DictionaryIdentifier):
 
 
 def _load_all_day_of_week() -> Iterable[str]:
-    res = importlib.resources.files(__package__).joinpath("data/all_day_of_the_week_names.txt")
-    with res.open("r") as input:
+    with (Path(__file__).parent / "data" / "all_day_of_the_week_names.txt").open("r") as input:
         return {day.strip().casefold() for day in input}
 
 

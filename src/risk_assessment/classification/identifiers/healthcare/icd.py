@@ -1,5 +1,4 @@
 import csv
-import importlib.resources
 from pathlib import Path
 
 import pandas as pd
@@ -16,8 +15,7 @@ class ICDv9(Identifier):
         self.min_length = 10000
         self.max_length = 0
 
-        res = importlib.resources.files(__package__).joinpath("data/en/ICDList.csv")
-        with res.open("r") as io_stream:
+        with (Path(__file__).parent / "data" / "en" / "ICDList.csv").open("r") as io_stream:
             reader = csv.reader(io_stream, delimiter=";")
 
             for record in reader:
@@ -68,8 +66,7 @@ class ICDv10(Identifier):
         self.min_length = 10000
         self.max_length = 0
 
-        res = importlib.resources.files(__package__).joinpath("data/en/ICDv10.csv")
-        with res.open("r") as io_stream:
+        with (Path(__file__).parent / "data" / "en" / "ICDv10.csv").open("r") as io_stream:
             reader = csv.reader(io_stream)
 
             for record in reader:
@@ -119,8 +116,7 @@ class ICDv11(Identifier):
         self.min_length = 10000
         self.max_length = 0
 
-        res = importlib.resources.files(__package__).joinpath("data/en/ICDv11.csv")
-        with res.open("r") as io_stream:
+        with (Path(__file__) / "data" / "en" / "ICDv11.csv").open("r") as io_stream:
             reader = csv.reader(io_stream)
             next(reader)  # discard header
 

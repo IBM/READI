@@ -671,31 +671,31 @@ class TFNAustralia(Identifier):
 
 
 class SSNUK(Identifier):
-    def is_of_this_type(self, original: str) -> bool:
-        text = original.replace(" ", "").upper()
+    def is_of_this_type(self, text: str) -> bool:
+        compressed = text.replace(" ", "").upper()
 
-        if not (len(text) == len(original) or len(text) + 4 == len(original)):
+        if not (len(compressed) == len(text) or len(compressed) + 4 == len(text)):
             # accept only 1 word or 1 space every 2 characters (left to right)
             return False
 
-        if len(text) != 9:
+        if len(compressed) != 9:
             return False
 
-        first = text[0]
+        first = compressed[0]
 
         if not first.isalpha() or first in "DFIQUV":
             return False
 
-        second = text[1]
+        second = compressed[1]
 
         if not second.isalpha() or second in "DFIQUVO":
             return False
 
-        for c in text[2:-1]:
+        for c in compressed[2:-1]:
             if not c.isdigit():
                 return False
 
-        if ord("A") <= ord(text[8]) <= ord("D"):
+        if ord("A") <= ord(compressed[8]) <= ord("D"):
             return True
 
         return False

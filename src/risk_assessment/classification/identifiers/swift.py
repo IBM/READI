@@ -1,12 +1,11 @@
-import importlib.resources
 import re
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import Identifier
 
 
 def _load_codes() -> set[str]:
-    res = importlib.resources.files(__package__).joinpath("data/common/swiftcodes.csv")
-    with res.open("r") as io_stream:
+    with (Path(__file__).parent / "data" / "common" / "swiftcodes.csv").open("r") as io_stream:
         return {code.strip().casefold() for code in io_stream}
 
 

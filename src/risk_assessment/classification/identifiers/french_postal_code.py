@@ -1,14 +1,12 @@
-import importlib.resources
 import re
+from pathlib import Path
 from re import Pattern
 
 from risk_assessment.classification.identifiers import Identifier
 
 
 def _load_valid_zipcodes() -> dict[str, set[str]]:
-    res = importlib.resources.files(__package__).joinpath("data/french_zipcodes")
-
-    with res.open("r") as input_data:
+    with (Path(__file__).parent / "data" / "french_zipcodes").open("r") as input_data:
         data = [line.strip() for line in input_data.readlines() if len(line.strip()) == 5]
 
     departments: dict[str, set[str]] = {zipcode[:2]: set() for zipcode in data if len(zipcode) == 5}

@@ -1,13 +1,12 @@
 import csv
-import importlib.resources
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import Identifier
 
 
 class ATC(Identifier):
     def __init__(self) -> None:
-        res = importlib.resources.files(__package__).joinpath("data/atc.csv")
-        with res.open("r") as io_stream:
+        with (Path(__file__).parent / "data" / "atc.csv").open("r") as io_stream:
             reader = csv.reader(io_stream, delimiter=";")
 
             self.values = {record[0].strip().casefold() for record in reader}

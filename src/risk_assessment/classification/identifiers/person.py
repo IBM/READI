@@ -1,14 +1,13 @@
-import importlib.resources
 import re
 from collections.abc import Callable, Iterable
 from datetime import datetime
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import DictionaryIdentifier, Identifier
 
 
 def _load_names(file_name: str) -> set[str]:
-    resource = importlib.resources.files(__package__).joinpath(file_name)
-    with resource.open("r") as reader:
+    with (Path(__file__).parent / file_name).open("r") as reader:
         return {name.strip().casefold() for name in reader if len(name.strip())}
 
 
@@ -147,11 +146,9 @@ class YearOfBirth(Identifier):
 
 
 def _load_marital_status() -> Iterable[str]:
-    res = importlib.resources.files(__package__).joinpath("data/en/marital_status.csv")
-
     terms: set[str] = set()
 
-    with res.open("r") as input:
+    with (Path(__file__).parent / "data" / "en" / "marital_status.csv").open("r") as input:
         for line in input:
             parts = line.split(",")
             for part in parts:
@@ -166,11 +163,9 @@ class MaritalStatus(DictionaryIdentifier):
 
 
 def _load_religions() -> Iterable[str]:
-    res = importlib.resources.files(__package__).joinpath("data/en/religions.csv")
-
     terms: set[str] = set()
 
-    with res.open("r") as input:
+    with (Path(__file__).parent / "data" / "en" / "religions.csv").open("r") as input:
         for line in input:
             parts = line.split(",")
             terms.add(parts[0].casefold())

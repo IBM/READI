@@ -28,7 +28,7 @@ dependencies = [
     "datasets==4.8.5",
     "fastparquet==2024.5.0",
     "flair>=0.15.1",
-    "google-re2==1.1.20240601",
+    "google-re2==1.1.20251105",
     "huggingface-hub>=0.34.0,<1.0",
     "mecab-python3==1.0.9",
     "nltk==3.9.1",
@@ -151,3 +151,10 @@ cache-keys = [
   { file = "pyproject.toml" },
   { git = { commit = true, tags = true }}
 ]
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+
+[tool.ty.src]
+include = ["src", "tests"]
+exclude = [".pre-commit-config.yaml"]

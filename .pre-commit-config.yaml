@@ -1,4 +1,8 @@
 exclude: ^(docs)$
+ci:
+  skip: [
+    ty
+  ]
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -39,12 +43,6 @@ repos:
     hooks:
     - id: bandit
       args: [-c, 'bandit.yaml']
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.19.0'
-    hooks:
-    -   id: mypy
-        args: ["--install-types", "--non-interactive"]
-        exclude: tests/|docs/|sphinx/|plugins/.*/setup.py
 -   repo: https://github.com/srstevenson/nb-clean
     rev: '4.0.1'
     hooks:

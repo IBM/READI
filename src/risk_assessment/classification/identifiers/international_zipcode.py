@@ -1,5 +1,5 @@
-import importlib.resources
 from functools import reduce
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import Identifier
 
@@ -20,8 +20,7 @@ def _reduce_dicts(left: dict[str, set[str]], right: dict[str, set[str]]) -> dict
 
 
 def _extract_zipcode_by_country() -> dict[str, set[str]]:
-    res = importlib.resources.files(__package__).joinpath("data/allCountries.txt")
-    with res.open("r") as input_data:
+    with (Path(__file__).parent / "data" / "allCountries.txt").open("r") as input_data:
         country_zipcode: dict[str, set[str]] = reduce(
             _reduce_dicts,
             map(

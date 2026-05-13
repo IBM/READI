@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 import csv
-import importlib.resources
 import logging
 import re
 from collections.abc import Callable, Iterable
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import DictionaryIdentifier, Identifier
 
@@ -12,16 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 def _extract_all_langugage_city_names(file: str) -> list[str]:
-    ref = importlib.resources.files(__package__).joinpath(file)
-    with ref.open("r") as stream:
+    with (Path(__file__).parent / file).open("r") as stream:
         return [line.strip() for line in stream.readlines()]
 
 
 def _extract_city_names(file: str) -> list[str]:
     logger.debug("Extracting city names")
 
-    ref = importlib.resources.files(__package__).joinpath(file)
-    with ref.open("r") as io_stream:
+    with (Path(__file__).parent / file).open("r") as io_stream:
         reader = csv.reader(io_stream, delimiter=",", quotechar='"')
 
         return [entry[0] for entry in reader]
@@ -30,8 +26,7 @@ def _extract_city_names(file: str) -> list[str]:
 def _extract_country_codes(file_name: str) -> list[str]:
     logger.debug("Extracting country codes")
 
-    res = importlib.resources.files(__package__).joinpath(file_name)
-    with res.open("r") as io_stream:
+    with (Path(__file__).parent / file_name).open("r") as io_stream:
         reader = csv.reader(io_stream, delimiter=",", quotechar='"')
         return list({row[1] for row in reader})
 
@@ -289,8 +284,7 @@ def _extract_country_names(file_name: str) -> list[str]:
         "Zimbabwe",
     ]
 
-    res = importlib.resources.files(__package__).joinpath(file_name)
-    with res.open("r") as io_stream:
+    with (Path(__file__).parent / file_name).open("r") as io_stream:
         reader = csv.reader(io_stream, delimiter=",", quotechar='"')
         country_names: list[str] = []
 

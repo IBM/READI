@@ -1,18 +1,16 @@
 import csv
-import importlib.resources
+from pathlib import Path
 
 from risk_assessment.classification.identifiers import Identifier
 
 
 class Gene(Identifier):
     def __init__(self) -> None:
-        res = importlib.resources.files(__package__).joinpath("data/genes_list.csv")
-
         self.gene_names: set[str] = set()
         self.HGNC_ID: set[str] = set()
         self.uni_prot: set[str] = set()
 
-        with res.open("r") as io_stream:
+        with (Path(__file__).parent / "data" / "genes_list.csv").open("r") as io_stream:
             reader = csv.reader(io_stream, delimiter=",")
 
             for record in reader:
