@@ -116,7 +116,7 @@ class ICDv11(Identifier):
         self.min_length = 10000
         self.max_length = 0
 
-        with (Path(__file__) / "data" / "en" / "ICDv11.csv").open("r") as io_stream:
+        with (Path(__file__).parent / "data" / "en" / "ICDv11.csv").open("r") as io_stream:
             reader = csv.reader(io_stream)
             next(reader)  # discard header
 
