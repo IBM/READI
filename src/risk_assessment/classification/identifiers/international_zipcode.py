@@ -20,12 +20,12 @@ def _reduce_dicts(left: dict[str, set[str]], right: dict[str, set[str]]) -> dict
 
 
 def _extract_zipcode_by_country() -> dict[str, set[str]]:
-    with (Path(__file__).parent / "data" / "allCountries.txt").open("r") as input_data:
+    with (Path(__file__).parent / "data" / "allCountries-short.txt").open("r") as input_data:
         country_zipcode: dict[str, set[str]] = reduce(
             _reduce_dicts,
             map(
                 _map_to_dict,
-                [tuple(line.strip().split()[:2]) for line in input_data.readlines() if line.strip()],
+                [tuple(line.split()[:2]) for line in input_data.readlines() if line.strip()],
             ),
         )
 
