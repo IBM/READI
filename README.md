@@ -133,22 +133,6 @@ Explore our comprehensive Jupyter notebooks in the [`notebooks/`](./notebooks) d
 
 ---
 
-## ⚙️ Advanced Configuration
-
-### WatsonNLP Integration
-
-To use READI with WatsonNLP annotators:
-
-1. Install `watson_nlp` library following the [official instructions](https://pages.github.ibm.com/ai-foundation/watson-nlp-documentation/installation.html)
-2. Uncomment the [WatsonNLP extractor code](https://github.com/IBM/READI/blob/main/risk_assessment/classification/unstructured/wnlp.py)
-3. Enable the corresponding [test suite](https://github.com/IBM/READI/blob/main/tests/classification/unstructured/test_wnlp.py)
-
-### Relation Extraction (Experimental)
-
-For advanced relation extraction capabilities, refer to the [experimental test suite](https://github.com/IBM/READI/blob/main/tests/readi/test_readi_with_re.py).
-
----
-
 ## 📖 Documentation
 
 For detailed documentation, API references, and advanced usage patterns, please visit our [documentation portal](https://github.com/IBM/READI/wiki) *(coming soon)*.
