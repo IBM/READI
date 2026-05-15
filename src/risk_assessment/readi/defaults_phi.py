@@ -1,11 +1,5 @@
-# from pathlib import Path
 import nltk
 
-# from risk_assessment.classification.identifiers import ATC
-# from risk_assessment.classification.identifiers import HealthcareBeneficiaryNumber
-# from risk_assessment.classification.identifiers import NDC
-# from risk_assessment.classification.identifiers import UniqueIDIdentifier
-# from risk_assessment.classification.identifiers import MedicalTerm
 from risk_assessment.classification.identifiers import (
     IBAN,
     IP,
@@ -60,19 +54,15 @@ IDENTIFIERS: list[Identifier] = [
     Email(),
     GenderLong(),
     Gene(),
-    # HealthcareBeneficiaryNumber(),
     IBAN(),
     IP(allow_double_colon=False),
     MedicalTerm(),
     MedicalRecordNumber(),
-    # NDC(),
     NationalIdentity(safe=True),
     Person(),
     SSN(),
     SWIFT(),
-    # USPhone(),
     Phone(),
-    # UniqueIDIdentifier(),
     ZipCode(),
     AustralianMedicareNumber(),
     URI(),

@@ -12,14 +12,6 @@ def _compute_confidence_score(best_type: TypeScore, all_scores: list[TypeScore])
     if len(all_scores) == 1:
         return 1.0
 
-    # 100, 20 -> diff 80, (100 - 80)/100
-    # version 1
-    # m = min(all_scores, key=lambda x: x.type_score)
-    # difference = best_type.type_score - m.type_score
-    # return (M.type_score - difference)/M.type_score
-
-    # average between distances between all scores
-    # version 2
     score = sum((best_type.type_score - type_score.type_score) / best_type.type_score for type_score in all_scores)
     if score == 0:  # all scores are the same
         return 1.0 / len(all_scores)

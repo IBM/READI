@@ -1,6 +1,9 @@
+from typing import cast
+
 import stanza
 from spacy.lang.en import English
 from spacy.language import Language
+from stanza.models.common.doc import Document
 
 from risk_assessment.readi.sentence_tokenizer import SentenceTokenizer
 from risk_assessment.readi.text_tokenizer import BaseTokenizer
@@ -23,7 +26,7 @@ class STANZASentenceTokenizer(SentenceTokenizer):
         self.tokenizer = stanza.Pipeline(lang=language, processors="tokenize", verbose=False, logging_level="ERROR")
 
     def span_tokenize(self, text: str) -> list[tuple[int, int]]:
-        tokenized_sentences = self.tokenizer(text)
+        tokenized_sentences = cast(Document, self.tokenizer(text))
         sentence_positions: list[tuple[int, int]] = []
         for item in tokenized_sentences.sentences:
             start = item.tokens[0].start_char
@@ -32,5 +35,5 @@ class STANZASentenceTokenizer(SentenceTokenizer):
         return sentence_positions
 
     def sent_tokenize(self, text: str) -> list[str]:
-        tokenized_sentences = self.tokenizer(text)
+        tokenized_sentences = cast(Document, self.tokenizer(text))
         return [item.text for item in tokenized_sentences.sentences]
