@@ -9,6 +9,7 @@ import re
 from collections.abc import Callable, Iterable
 from datetime import datetime
 from re import Match, Pattern
+from typing import Any
 
 import re2
 
@@ -40,6 +41,9 @@ def _compute_unique_patterns(
         unique_patterns.add(pattern.pattern)
 
     return "|".join(unique_patterns)
+
+
+_RePatternLike = Pattern[str] | Any
 
 
 class DateTime(Identifier):
@@ -450,7 +454,7 @@ def _match_patterns(patterns: Iterable[tuple[str, Pattern[str]]], text: str) -> 
     return any(_match_format(format, text) for format, pattern in patterns if pattern.match(text))
 
 
-def _match_pattern(pattern: Pattern[str], formats: set[str], text: str) -> bool:
+def _match_pattern(pattern: _RePatternLike, formats: set[str], text: str) -> bool:
     """Match text against a combined pattern and try parsing with multiple formats.
 
     Args:
