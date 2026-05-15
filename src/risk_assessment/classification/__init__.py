@@ -236,7 +236,9 @@ class DatasetClassification:
         reports: dict[str, dict[str, float]] = {}
         size = len(dataset)
         for column_name in dataset.columns:
-            (column_best_type, column_full_report) = self.analyze_column(dataset[column_name], size)
+            # Explicitly cast to Series to satisfy type checker
+            column_data: Series = cast(Series, dataset[column_name])
+            (column_best_type, column_full_report) = self.analyze_column(column_data, size)
             best_types[column_name] = column_best_type
             reports[column_name] = column_full_report
 

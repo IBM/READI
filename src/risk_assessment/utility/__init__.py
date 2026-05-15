@@ -170,9 +170,9 @@ def extract_statistics(dataset: DataFrame) -> DatasetStatistics:
     """
     column_statistics: list[ColumnStatistic] = [
         (
-            _numeric_column_statistics(column_name, column_type, dataset[column_name])
+            _numeric_column_statistics(column_name, column_type, Series(dataset[column_name]))
             if is_numeric_dtype(column_type)
-            else _categorical_column_statistics(column_name, column_type, dataset[column_name])
+            else _categorical_column_statistics(column_name, column_type, Series(dataset[column_name]))
         )
         for column_name, column_type in zip(dataset.columns, dataset.dtypes, strict=False)
     ]
@@ -245,8 +245,12 @@ def kl_divergence(X: Series, Y: Series) -> float:
         if x_i not in Y:
             return np.inf
 
-        x = X[x_i]
-        y = Y[x_i]
+        x_val = X[x_i]
+        y_val = Y[x_i]
+
+        # Extract scalar values if needed
+        x = float(x_val.item() if isinstance(x_val, Series) else x_val)
+        y = float(y_val.item() if isinstance(y_val, Series) else y_val)
 
         if math.isnan(y):
             return np.inf
