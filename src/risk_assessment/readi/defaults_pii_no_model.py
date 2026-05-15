@@ -1,0 +1,361 @@
+"""Default configuration for PII detection without machine learning models.
+
+This module provides a lightweight PII detection configuration that uses only
+dictionary-based and regex-based identifiers without heavy ML models like spaCy.
+This configuration is faster and requires less memory than the full PII detection,
+making it suitable for resource-constrained environments or when speed is critical.
+
+The configuration includes:
+- Dictionary and regex-based entity extractors (DRL)
+- NLTK POS tagging for basic linguistic analysis
+- No transformer models or spaCy models
+- Optimized for speed over accuracy
+
+Use this configuration when:
+- You need faster processing times
+- Memory/compute resources are limited
+- You don't need the highest accuracy
+- You're processing large volumes of text
+
+Example:
+    >>> from risk_assessment.readi.analyzer import READIAnalyzer
+    >>> analyzer = READIAnalyzer(
+    ...     detection_type=READIAnalyzer.DetectionType.PII_NO_MODEL
+    ... )
+    >>> text = "Contact John Doe at john@example.com or 555-1234"
+    >>> entities = analyzer.detect(text)
+"""
+
+import nltk
+
+from risk_assessment.classification.identifiers import (
+    IBAN,
+    IP,
+    SWIFT,
+    URI,
+    AgeImproved,
+    AustralianMedicareNumber,
+    Country,
+    CreditCard,
+    DateTime,
+    Email,
+    GenderLong,
+    HealthcareBeneficiaryNumber,
+    Identifier,
+    NationalIdentity,
+    Person,
+    Phone,
+    ZipCode,
+)
+from risk_assessment.classification.unstructured import (
+    EntityExtractor,
+    MultiSourceEntityExtractor,
+)
+from risk_assessment.classification.unstructured.aggregator import (
+    AggregatorConfiguration,
+)
+from risk_assessment.classification.unstructured.drl import (
+    DRLEntityExtractor,
+    ImprovedDRLEntityExtractor,
+)
+from risk_assessment.classification.unstructured.nltk import NLTKPoSTagger
+
+nltk.download("averaged_perceptron_tagger", quiet=True)
+
+
+from nltk import TreebankWordTokenizer, WordPunctTokenizer  # noqa: E402
+from nltk.tag import PerceptronTagger  # noqa: E402
+
+#: Tokenizer used for text processing
+TOKENIZER = TreebankWordTokenizer()
+
+#: List of identifier instances for detecting various PII types
+IDENTIFIERS: list[Identifier] = [
+    AgeImproved(),
+    Country(False),
+    CreditCard(),
+    DateTime(),
+    Email(),
+    GenderLong(),
+    HealthcareBeneficiaryNumber(),
+    IBAN(),
+    IP(allow_double_colon=False),
+    NationalIdentity(safe=True),
+    Person(),
+    SWIFT(),
+    Phone(),
+    AustralianMedicareNumber(),
+    ZipCode(),
+    URI(),
+]
+
+#: Identifiers to use for validation (excludes URI which is last in the list)
+IDENTIFIERS_TO_VALIDATE: list[Identifier] = IDENTIFIERS[:-1]
+
+#: List of entity extractors that will be used for PII detection.
+#: This configuration uses only lightweight extractors without ML models:
+#: - NLTKPoSTagger: Basic part-of-speech tagging
+#: - ImprovedDRLEntityExtractor: Dictionary and regex-based detection
+#: - DRLEntityExtractor: Specialized URI detection
+ENTITY_EXTRACTORS: list[EntityExtractor | MultiSourceEntityExtractor] = [
+    NLTKPoSTagger(TOKENIZER, PerceptronTagger()),
+    ImprovedDRLEntityExtractor(
+        identifiers=IDENTIFIERS,
+        tokenizer_list=[WordPunctTokenizer(), TOKENIZER],
+        max_shinglet_length=15,
+        type_mapping={
+            "Age": "DateTime",
+            "AgeImproved": "DateTime",
+            "GenderLong": "Gender",
+            "SSN": "NationalIdentity",
+            "SSNUK": "NationalIdentity",
+            "USPostalAddress": "Location",
+            "ZipCode": "Location",
+        },
+    ),
+    DRLEntityExtractor(
+        identifiers=[URI()],
+        tokenizer=TOKENIZER,
+        min_shinglet_length=10,
+        max_shinglet_length=35,
+    ),
+]
+
+#: Configuration for aggregating and filtering detected entities.
+#: This configuration:
+#: - Merges overlapping entities from different extractors
+#: - Validates entities using POS tags
+#: - Filters out common symbols and punctuation
+#: - Applies confidence thresholds for certain entity types
+#: - Assigns priority weights to different extractors
+AGGREGATOR_CONFIGURATION = AggregatorConfiguration(
+    merge_entities=True,
+    prioritize_inclusion=True,
+    validate_part_of_speech=True,
+    identifiers_list=IDENTIFIERS_TO_VALIDATE,
+    filter_symbols={",", ".", "-", " ", "!", ":", ";", "\n", "\t"},
+    thresholds={"Person": 450},
+    pos_insensitive_types={
+        "AustralianMedicareNumber",
+        "CreditCard",
+        "DEANumber",
+        "Date",
+        "DateTime",
+        "Email",
+        "HealthcareBeneficiaryNumber",
+        "IBAN",
+        "IMEI",
+        "IP",
+        "MedicalTerm",
+        "MedicalRecordNumber",
+        "NationalIdentity",
+        "Organization",
+        "Phone",
+        "SWIFT",
+        "USPhone",
+        "UniqueID",
+        "ZipCode",
+        "URI",
+    },
+    to_report_only={
+        "ATC",
+        "Age",
+        "AgeImproved",
+        "AustralianMedicareNumber",
+        "BankAccountNumber.CreditCardNumber.Amex",
+        "BankAccountNumber.CreditCardNumber.Diners",
+        "BankAccountNumber.CreditCardNumber.Discover",
+        "BankAccountNumber.CreditCardNumber.JCB",
+        "BankAccountNumber.CreditCardNumber.Master",
+        "BankAccountNumber.CreditCardNumber.Other",
+        "BankAccountNumber.CreditCardNumber.Visa",
+        "BankAccountNumber.IBAN.AT",
+        "BankAccountNumber.IBAN.BE",
+        "BankAccountNumber.IBAN.BG",
+        "BankAccountNumber.IBAN.CH",
+        "BankAccountNumber.IBAN.CY",
+        "BankAccountNumber.IBAN.CZ",
+        "BankAccountNumber.IBAN.DE",
+        "BankAccountNumber.IBAN.DK",
+        "BankAccountNumber.IBAN.EE",
+        "BankAccountNumber.IBAN.ES",
+        "BankAccountNumber.IBAN.FI",
+        "BankAccountNumber.IBAN.FR",
+        "BankAccountNumber.IBAN.GR",
+        "BankAccountNumber.IBAN.HR",
+        "BankAccountNumber.IBAN.HU",
+        "BankAccountNumber.IBAN.IE",
+        "BankAccountNumber.IBAN.IS",
+        "BankAccountNumber.IBAN.IT",
+        "BankAccountNumber.IBAN.LI",
+        "BankAccountNumber.IBAN.LT",
+        "BankAccountNumber.IBAN.LU",
+        "BankAccountNumber.IBAN.LV",
+        "BankAccountNumber.IBAN.MT",
+        "BankAccountNumber.IBAN.NL",
+        "BankAccountNumber.IBAN.NO",
+        "BankAccountNumber.IBAN.PL",
+        "BankAccountNumber.IBAN.PT",
+        "BankAccountNumber.IBAN.RO",
+        "BankAccountNumber.IBAN.SE",
+        "BankAccountNumber.IBAN.SK",
+        "BankAccountNumber.Routing.USCredential.AccessKey",
+        "Credential.Password",
+        "Credential.Secret",
+        "Credential.Username",
+        "CreditCard",
+        "DEANumber",
+        "DateTime",
+        "Email",
+        "Gender",
+        "Gene",
+        "HealthcareBeneficiaryNumber",
+        "IBAN",
+        "IP",
+        "Location",
+        "Location.PostalAddress.DE",
+        "Location.PostalAddress.ES",
+        "Location.PostalAddress.FR",
+        "Location.PostalAddress.GB",
+        "Location.PostalAddress.IT",
+        "MedicalTerm",
+        "MedicalRecordNumber",
+        "NDC",
+        "NORP",
+        "NationalIdentity",
+        "NationalNumber.DriversLicense.JA",
+        "NationalNumber.DriversLicenseNumber.US",
+        "NationalNumber.IndividualNumber.JA",
+        "NationalNumber.LicensePlateNumber.US",
+        "NationalNumber.MedicalRecordNumber.US",
+        "NationalNumber.NationalID.BE",
+        "NationalNumber.NationalID.BG",
+        "NationalNumber.NationalID.CH",
+        "NationalNumber.NationalID.CH.Old",
+        "NationalNumber.NationalID.CZ",
+        "NationalNumber.NationalID.DK",
+        "NationalNumber.NationalID.EE",
+        "NationalNumber.NationalID.ES",
+        "NationalNumber.NationalID.FI",
+        "NationalNumber.NationalID.GB.Old",
+        "NationalNumber.NationalID.GR",
+        "NationalNumber.NationalID.HR",
+        "NationalNumber.NationalID.HU",
+        "NationalNumber.NationalID.IE",
+        "NationalNumber.NationalID.IS",
+        "NationalNumber.NationalID.IT",
+        "NationalNumber.NationalID.LT",
+        "NationalNumber.NationalID.LV",
+        "NationalNumber.NationalID.NL",
+        "NationalNumber.NationalID.NO",
+        "NationalNumber.NationalID.NO.Old",
+        "NationalNumber.NationalID.PL",
+        "NationalNumber.NationalID.PT",
+        "NationalNumber.NationalID.PT.Old",
+        "NationalNumber.NationalID.RO",
+        "NationalNumber.NationalID.SE",
+        "NationalNumber.NationalID.SK",
+        "NationalNumber.Passport.AT",
+        "NationalNumber.Passport.BE",
+        "NationalNumber.Passport.CH",
+        "NationalNumber.Passport.DE",
+        "NationalNumber.Passport.ES",
+        "NationalNumber.Passport.FI",
+        "NationalNumber.Passport.FR",
+        "NationalNumber.Passport.GB",
+        "NationalNumber.Passport.GR",
+        "NationalNumber.Passport.IE",
+        "NationalNumber.Passport.IT",
+        "NationalNumber.Passport.JA",
+        "NationalNumber.Passport.NL",
+        "NationalNumber.Passport.NO",
+        "NationalNumber.Passport.PL",
+        "NationalNumber.Passport.SE",
+        "NationalNumber.Passport.US",
+        "NationalNumber.SocialInsuranceNumber.DE",
+        "NationalNumber.SocialInsuranceNumber.FR",
+        "NationalNumber.SocialSecurityNumber.GB.NHS",
+        "NationalNumber.SocialSecurityNumber.GB.NINO",
+        "NationalNumber.TaxID.AT",
+        "NationalNumber.TaxID.CY",
+        "NationalNumber.TaxID.CZ",
+        "NationalNumber.TaxID.ES",
+        "NationalNumber.TaxID.GR",
+        "NationalNumber.TaxID.HR",
+        "NationalNumber.TaxID.HU",
+        "NationalNumber.TaxID.IE",
+        "NationalNumber.TaxID.LU",
+        "NationalNumber.TaxID.PL",
+        "NationalNumber.TaxID.PT",
+        "NationalNumber.TaxID.RO",
+        "NationalNumber.TaxID.SK",
+        "NationalNumber.USTaxIDNumber.US",
+        "Net.EmailAddress",
+        "Net.IPAddress",
+        "Net.MacAddress",
+        "Person",
+        "Phone",
+        "PhoneNumber",
+        "SSN",
+        "SWIFT",
+        "URI",
+        "USPhone",
+        "UniqueID",
+        "ZipCode",
+    },
+    weights={
+        "QUANTITY": {"WATBERT_ONTONOTES": 6000},
+        "CARDINAL": {"WATBERT_ONTONOTES": 6000},
+        "NORP": {"WATBERT_ONTONOTES": 6000},
+        "ZipCode": {"DRL": 100},
+        "Location": {
+            "DRL": 1300,
+            "WATBERT_ONTONOTES": 500,
+            "WNLP": 500,
+        },
+        "Person": {
+            "DRL": 100,
+            "WNLP": 450,
+            "SPACY": 450,
+            "SPACY_ML": 450,
+            "WATBERT_ONTONOTES": 500,
+        },
+        "USPhone": {"DRL": 1000},
+        "URI": {"DRL": 4000},
+        "Net.MacAddress": {"WNLP": 4000},
+        "IP": {"DRL": 4000, "WNLP": 1000},
+        "SSN": {"DRL": 2000, "DEBERTA_PII": 1000},
+        "Credential.AccessKey": {"WNLP": 4000},
+        "Credential.Password": {"WNLP": 4000},
+        "Credential.Secret": {"WNLP": 4000},
+        "Credential.Username": {"WNLP": 4000},
+        "NationalIdentity": {"DRL": 1500},
+        "DateTime": {
+            "DRL": 1000,
+            "WATBERT_ONTONOTES": 450,
+            "WNLP": 450,
+        },
+        "Email": {"DRL": 2000, "WNLP": 2000},
+        "IBAN": {"DRL": 4000, "WNLP": 4000},
+        "CreditCard": {"DRL": 1000, "WNLP": 1000},
+        "MedicalTerm": {"DRL": 100},
+        "Quantity": {"WATBERT_ONTONOTES": 2000},
+        "Gene": {"DRL": 100},
+        "SWIFT": {"DRL": 1000},
+        "ATC": {"DRL": 1000},
+        "NDC": {"DRL": 1000},
+        "Age": {"DRL": 6000},
+        "PERCENT": {"WATBERT_ONTONOTES": 6000},
+        "AccountsOfficeReferenceNumber": {"DRL": 1000, "WNLP": 1000},
+        "NationalIdentifier": {"DRL": 1000, "WNLP": 1000},
+        "DEANumber": {"DRL": 1000},
+        "HealthcareBeneficiaryNumber": {"DRL": 1000},
+        "UniqueID": {"DRL": 1000},
+        "MedicalRecordNumber": {"DRL": 1000},
+        "AustralianMedicareNumber": {"DRL": 1000},
+        "Phone": {
+            "DRL": 500,
+            "WNLP": 300,
+        },
+    },
+)
