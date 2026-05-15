@@ -1,3 +1,9 @@
+"""Geography identifier for detecting geographic locations and postal codes.
+
+This module provides identifiers for recognizing country names, country codes,
+city names, US zip codes, UK postcodes, and US state names.
+"""
+
 import csv
 import logging
 import re
@@ -10,11 +16,27 @@ logger = logging.getLogger(__name__)
 
 
 def _extract_all_langugage_city_names(file: str) -> list[str]:
+    """Extract city names from a multi-language file.
+
+    Args:
+        file: Path to the file containing city names.
+
+    Returns:
+        List of city names.
+    """
     with (Path(__file__).parent / file).open("r") as stream:
         return [line.strip() for line in stream.readlines()]
 
 
 def _extract_city_names(file: str) -> list[str]:
+    """Extract city names from a CSV file.
+
+    Args:
+        file: Path to the CSV file containing city names.
+
+    Returns:
+        List of city names.
+    """
     logger.debug("Extracting city names")
 
     with (Path(__file__).parent / file).open("r") as io_stream:
@@ -24,6 +46,14 @@ def _extract_city_names(file: str) -> list[str]:
 
 
 def _extract_country_codes(file_name: str) -> list[str]:
+    """Extract country codes from a CSV file.
+
+    Args:
+        file_name: Path to the CSV file containing country data.
+
+    Returns:
+        List of unique country codes.
+    """
     logger.debug("Extracting country codes")
 
     with (Path(__file__).parent / file_name).open("r") as io_stream:
@@ -32,6 +62,14 @@ def _extract_country_codes(file_name: str) -> list[str]:
 
 
 def _extract_country_names(file_name: str) -> list[str]:
+    """Extract country names from a CSV file with variations.
+
+    Args:
+        file_name: Path to the CSV file containing country data.
+
+    Returns:
+        List of country names including variations.
+    """
     logger.debug("Extracting country names and codes")
 
     countries = [
@@ -307,6 +345,16 @@ def _extract_country_names(file_name: str) -> list[str]:
 
 
 class CountryName(DictionaryIdentifier):
+    """Identifier for country names.
+
+    Example:
+        >>> identifier = CountryName()
+        >>> identifier.is_of_this_type("United States")
+        True
+        >>> identifier.is_of_this_type("France")
+        True
+    """
+
     def __init__(
         self,
         data_file: str = "data/en/countryList.csv",
@@ -316,6 +364,16 @@ class CountryName(DictionaryIdentifier):
 
 
 class CountryCode(DictionaryIdentifier):
+    """Identifier for country codes (ISO codes).
+
+    Example:
+        >>> identifier = CountryCode()
+        >>> identifier.is_of_this_type("US")
+        True
+        >>> identifier.is_of_this_type("FR")
+        True
+    """
+
     def __init__(
         self,
         data_file: str = "data/en/countryList.csv",
@@ -325,16 +383,49 @@ class CountryCode(DictionaryIdentifier):
 
 
 class Country(Identifier):
+    """Identifier for countries (names and optionally codes).
+
+    Example:
+        >>> identifier = Country()
+        >>> identifier.is_of_this_type("Canada")
+        True
+        >>> identifier.is_of_this_type("CA")
+        True
+    """
+
     def __init__(self, include_code: bool = True) -> None:
+        """Initialize the Country identifier.
+
+        Args:
+            include_code: If True, match both names and codes. Defaults to True.
+        """
         self.names = CountryName()
         self.codes = CountryCode()
         self.include_code = include_code
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid country name or code.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches a country name or (if enabled) code, False otherwise.
+        """
         return self.names.is_of_this_type(text) or (self.include_code and self.codes.is_of_this_type(text))
 
 
 class City(DictionaryIdentifier):
+    """Identifier for city names.
+
+    Example:
+        >>> identifier = City()
+        >>> identifier.is_of_this_type("New York")
+        True
+        >>> identifier.is_of_this_type("London")
+        True
+    """
+
     def __init__(
         self, data_file: str = "data/en/cityList.csv", extractor: Callable[[str], Iterable[str]] = _extract_city_names
     ) -> None:
@@ -342,7 +433,20 @@ class City(DictionaryIdentifier):
 
 
 class ZipCode(Identifier):
+    """Identifier for US ZIP codes.
+
+    Validates 5-digit ZIP codes against known US state ranges.
+
+    Example:
+        >>> identifier = ZipCode()
+        >>> identifier.is_of_this_type("10001")  # NYC
+        True
+        >>> identifier.is_of_this_type("90210")  # Beverly Hills
+        True
+    """
+
     def __init__(self) -> None:
+        """Initialize the ZipCode identifier with US state ZIP code ranges."""
         self.valid_codes = {
             "AL": (35004, 36925),
             "AK": (99501, 99950),
@@ -398,6 +502,14 @@ class ZipCode(Identifier):
         }
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid US ZIP code.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text is a 5-digit ZIP code within valid US ranges, False otherwise.
+        """
         text = text.strip()
         if len(text) == 5:
             try:
@@ -412,6 +524,18 @@ class ZipCode(Identifier):
 
 
 class UKPostCode(Identifier):
+    """Identifier for UK postcodes.
+
+    Validates UK postcode format with area, district, sector, and unit components.
+
+    Example:
+        >>> identifier = UKPostCode()
+        >>> identifier.is_of_this_type("SW1A 1AA")
+        True
+        >>> identifier.is_of_this_type("M1 1AE")
+        True
+    """
+
     AREA = r"(?:(?:A[BL])|(?:B[ABDHLNRST]?)|(?:C[ABFHMORTVW])|(?:D[ADEGHLNTY])|(?:E[CHNX]?)|(?:F[KY])|(?:G[LUY]?)|(?:H[ADGPRSUX])|(?:I[GPVM])|(?:JE)|(?:K[ATWY])|(?:L[ADELNSU]?)|(?:M[EKL]?)|(?:N[EGNPRW]?)|(?:O[LX])|(?:P[AEHLOR])|(?:R[GHM])|(?:S[AEGKLMNOPRSTWY]?)|(?:T[ADFNQRSW])|(?:UB)|(?:W[ACDFNRSV]?)|(?:YO)|(?:ZE))"
     DISTRICT = r"(?:(?:\d{1,2})|(?:\d\w))"
     SECTOR = r"(?:\d)"
@@ -423,11 +547,32 @@ class UKPostCode(Identifier):
     _pattern = re.compile(r"^" + OUTWARD + r"\s?" + INWARD + r"$", flags=re.IGNORECASE)
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid UK postcode.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches UK postcode format, False otherwise.
+        """
         return self._pattern.match(text) is not None
 
 
 class UnitedStateState(DictionaryIdentifier):
+    """Identifier for US state names and abbreviations.
+
+    Includes all 50 states and US territories.
+
+    Example:
+        >>> identifier = UnitedStateState()
+        >>> identifier.is_of_this_type("California")
+        True
+        >>> identifier.is_of_this_type("CA")
+        True
+    """
+
     def __init__(self) -> None:
+        """Initialize the UnitedStateState identifier with state names and codes."""
         super().__init__(
             "US State",
             [

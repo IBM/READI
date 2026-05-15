@@ -1,3 +1,9 @@
+"""Age identifier for detecting age values in various formats.
+
+This module provides identifiers for recognizing age values, including numeric ages,
+age expressions with units (years, months, weeks), and age-related phrases.
+"""
+
 from re import I, Pattern, U, compile
 
 from word2number.w2n import word_to_num
@@ -6,7 +12,29 @@ from risk_assessment.classification.identifiers import Identifier
 
 
 class Age(Identifier):
+    """Basic age identifier for numeric age values.
+
+    Validates that a value represents a plausible human age (18-91 years).
+
+    Example:
+        >>> identifier = Age()
+        >>> identifier.is_of_this_type("25")
+        True
+        >>> identifier.is_of_this_type(45)
+        True
+        >>> identifier.is_of_this_type("150")
+        False
+    """
+
     def is_of_this_type(self, text: str | int) -> bool:
+        """Check if text or integer represents a valid age.
+
+        Args:
+            text: The text string or integer to check.
+
+        Returns:
+            True if the value is between 18 and 91 (inclusive), False otherwise.
+        """
         int_value: int = 10_000_000
 
         if isinstance(text, str):
@@ -25,6 +53,32 @@ class Age(Identifier):
 
 
 class AgeImproved(Identifier):
+    """Advanced age identifier supporting multiple age expression formats.
+
+    Recognizes various age patterns including:
+    - Numeric ages with units (years, months, weeks)
+    - Age with gender suffixes (e.g., "25 year old man")
+    - Date of birth patterns
+    - Death age patterns
+    - Word-based age expressions
+
+    Attributes:
+        SUFFIXES: Regex pattern for gender/person suffixes.
+        age_pattern_with_gender: List of patterns matching ages with gender suffixes.
+        age_pattern: List of patterns matching various age formats.
+
+    Example:
+        >>> identifier = AgeImproved()
+        >>> identifier.is_of_this_type("25 year old")
+        True
+        >>> identifier.is_of_this_type("30-year-old")
+        True
+        >>> identifier.is_of_this_type("45 yo")
+        True
+        >>> identifier.is_of_this_type("died at age 80")
+        True
+    """
+
     SUFFIXES = r"(?:man|woman|male|female|daughter|son|niece|nephew|lady|gentleman)"
 
     age_pattern_with_gender: list[Pattern[str]] = [
@@ -93,6 +147,14 @@ class AgeImproved(Identifier):
     ]
 
     def _try_birthday_patterns(self, input: str) -> bool:
+        """Check if text matches birthday-related age patterns.
+
+        Args:
+            input: The text to check.
+
+        Returns:
+            True if text matches birthday patterns like "on his 25th birthday", False otherwise.
+        """
         input = input.lower()
         if (input.startswith("on his") or input.startswith("on her")) and input.endswith("birthday"):
             middle_part = input[len("on his") : -len("birthday")].strip()
@@ -102,6 +164,14 @@ class AgeImproved(Identifier):
         return False
 
     def _try_word_pattern(self, text: str) -> bool:
+        """Check if text matches word-based age patterns.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches patterns like "twenty-five years old", False otherwise.
+        """
         if self._try_birthday_patterns(text):
             return True
 
@@ -114,6 +184,14 @@ class AgeImproved(Identifier):
         return False
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text represents an age in any supported format.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches any age pattern, False otherwise.
+        """
         return (
             any(pattern.match(text) for pattern in self.age_pattern)
             or any(pattern.match(text) for pattern in self.age_pattern_with_gender)
@@ -122,6 +200,14 @@ class AgeImproved(Identifier):
 
 
 def valid_number(text: str) -> bool:
+    """Check if text represents a valid number using word-to-number conversion.
+
+    Args:
+        text: The text to check (e.g., "twenty-five", "thirty").
+
+    Returns:
+        True if text can be converted to an integer, False otherwise.
+    """
     try:
         num = word_to_num(text.strip().casefold())
 

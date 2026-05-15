@@ -1,3 +1,10 @@
+"""National identifier for detecting national ID numbers from various countries.
+
+This module provides identifiers for recognizing national identification numbers,
+social security numbers, tax identification numbers, and similar government-issued
+identifiers from countries around the world.
+"""
+
 import re
 
 from risk_assessment.classification.identifiers import (
@@ -8,9 +15,29 @@ from risk_assessment.classification.identifiers import (
 
 
 class CFPBrazil(Identifier):
+    """Identifier for Brazilian CPF (Cadastro de Pessoas Físicas) numbers.
+
+    CPF is the Brazilian individual taxpayer registry identification.
+    Format: XXX.XXX.XXX-XX or variations without punctuation.
+
+    Example:
+        >>> identifier = CFPBrazil()
+        >>> identifier.is_of_this_type("123.456.789-09")
+        True
+    """
+
     pattern = re.compile(r"^(\d{3}[.]\d{3}[.]\d{3}[-]\d{2})$|^(\d{9}[-]\d{2})$|^(\d{9}[-]\d{2})$|^(\d{11})$")
 
     def _verify(self, digits: str, checksum: str) -> bool:
+        """Verify CPF checksum digits.
+
+        Args:
+            digits: The first 9 digits of the CPF.
+            checksum: The 2 checksum digits.
+
+        Returns:
+            True if checksum is valid, False otherwise.
+        """
         v1 = 0
         v2 = 0
         for i in range(9):
@@ -23,8 +50,16 @@ class CFPBrazil(Identifier):
         return False
 
     def is_of_this_type(self, text: str) -> bool:
-        # https://en.wikipedia.org/wiki/CPF_number
+        """Check if text is a valid Brazilian CPF number.
 
+        Reference: https://en.wikipedia.org/wiki/CPF_number
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text is a valid CPF with correct checksum, False otherwise.
+        """
         if re.match(self.pattern, text):
             text_wo_punct = text.replace("-", "").replace(".", "")
             digits: str = text_wo_punct[:9]
@@ -34,13 +69,32 @@ class CFPBrazil(Identifier):
 
 
 class NIRFrance(Identifier):
+    """Identifier for French NIR (Numéro d'Inscription au Répertoire) numbers.
+
+    Also known as French Social Security Number.
+    Format: 15 digits with optional spaces.
+
+    Example:
+        >>> identifier = NIRFrance()
+        >>> identifier.is_of_this_type("1 85 02 75 116 001 42")
+        True
+    """
+
     pattern = re.compile(
         r"^([7182]\d{14})$|^([7182])( )(\d{2})( )(\d{2})( )(\d{2})( )(\d{3})( )(\d{3})( )(\d{2})$|^([7128]\d{12} \d{2})$|^([7182]\d{4}2[AB]\d{8})$|^([7182])( )(\d{2})( )(\d{2})( )(2[AB])( )(\d{3})( )(\d{3})( )(\d{2})$"
     )
 
     def is_of_this_type(self, text: str) -> bool:
-        # https://fr.wikipedia.org/wiki/Numéro_de_sécurité_sociale_en_France
+        """Check if text is a valid French NIR number.
 
+        Reference: https://fr.wikipedia.org/wiki/Numéro_de_sécurité_sociale_en_France
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text is a valid NIR with correct check digit, False otherwise.
+        """
         if re.match(self.pattern, text):
             text_wo_punct = re.sub("[ ]", "", text)
             text_wo_letters = re.sub("2A", "18", text_wo_punct)
@@ -52,11 +106,30 @@ class NIRFrance(Identifier):
 
 
 class TINGermany(Identifier):
+    """Identifier for German TIN (Tax Identification Number / Steueridentifikationsnummer).
+
+    Format: 11 digits with specific validation rules.
+
+    Example:
+        >>> identifier = TINGermany()
+        >>> identifier.is_of_this_type("12 345 678 901")
+        True
+    """
+
     pattern = re.compile(
         r"^([1-9]\d{11})$|^([1-9]\d \d{3} \d{3} \d{3})$|^([1-9][0-9])([,])(d{3})([,])(\d{3})([,])(\d{3})$|^([1-9][0-9])([.])(d{3})([.])(\d{3})([.])(\d{3})$|^([1-9][0-9])([\/])(d{3})([\/])(\d{3})([\/])(\d{3})$|^([1-9]\d{10})$"
     )  # noqa
 
     def check_last_digit(self, first_ten_digits: list[str], check_digit: str) -> bool:
+        """Verify the check digit of a German TIN.
+
+        Args:
+            first_ten_digits: List of the first 10 digits.
+            check_digit: The check digit to verify.
+
+        Returns:
+            True if check digit is valid, False otherwise.
+        """
         check_number = 10
         for digit in first_ten_digits:
             check_sum = (int(digit) + check_number) % 10
@@ -68,6 +141,14 @@ class TINGermany(Identifier):
         return int(check_digit) == check_number
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid German TIN.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text is a valid TIN with correct structure and check digit, False otherwise.
+        """
         if re.match(self.pattern, text):
             text_wo_punct = re.sub("[ ./,]", "", text)
 
@@ -251,6 +332,16 @@ class MyNumberJapan(Identifier):
 
 
 def _valid_birth_date(day: int, month: int, year: int) -> bool:
+    """Check if a date is valid.
+
+    Args:
+        day: Day of month.
+        month: Month number.
+        year: Year.
+
+    Returns:
+        True if the date is valid, False otherwise.
+    """
     from datetime import date
 
     try:
@@ -702,7 +793,28 @@ class SSNUK(Identifier):
 
 
 class SSN(Identifier):
+    """Identifier for US Social Security Numbers (SSN).
+
+    Format: XXX-XX-XXXX where X is a digit.
+    Validates format and excludes invalid area numbers (000, 666).
+
+    Example:
+        >>> identifier = SSN()
+        >>> identifier.is_of_this_type("123-45-6789")
+        True
+        >>> identifier.is_of_this_type("000-12-3456")
+        False
+    """
+
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid US Social Security Number.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text is a valid SSN format with valid area number, False otherwise.
+        """
         parts = text.split("-")
 
         if len(parts) != 3:
@@ -723,7 +835,21 @@ class SSN(Identifier):
 
 
 class USPassport(RegexIdentifierWithSpan):
+    """Identifier for US Passport numbers.
+
+    Format: One letter followed by 8 digits, optionally prefixed with keywords
+    like "passport", "passport#", etc.
+
+    Example:
+        >>> identifier = USPassport()
+        >>> identifier.is_of_this_type("A12345678")
+        True
+        >>> identifier.is_of_this_type("Passport: B98765432")
+        True
+    """
+
     def __init__(self) -> None:
+        """Initialize the USPassport identifier with regex pattern."""
         super().__init__(
             "USPassport",
             [
@@ -780,7 +906,31 @@ class PESELPoland(Identifier):
 
 
 class NationalIdentity(Identifier):
+    """Composite identifier for national identity numbers from multiple countries.
+
+    Combines identifiers for national IDs from various countries. Can operate in
+    safe mode (only IDs with checksum validation) or include IDs without checksums.
+
+    Supported countries include: Brazil, France, Germany, Italy, Japan, Canada,
+    Israel, Mexico, Spain, China, South Korea, Australia, UK, US, Poland, and more.
+
+    Attributes:
+        safe: If True, only check IDs with checksum validation. Defaults to True.
+        with_check: List of identifiers with checksum validation.
+        without_check: List of identifiers without checksum validation.
+
+    Example:
+        >>> identifier = NationalIdentity(safe=True)
+        >>> identifier.is_of_this_type("123-45-6789")  # US SSN
+        True
+    """
+
     def __init__(self, safe: bool = True) -> None:
+        """Initialize the NationalIdentity identifier.
+
+        Args:
+            safe: If True, only validate IDs with checksums. Defaults to True.
+        """
         self.safe = safe
 
         self.with_check: list[Identifier] = [
@@ -810,6 +960,14 @@ class NationalIdentity(Identifier):
         ]
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid national identity number.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches any supported national ID format, False otherwise.
+        """
         if self.safe:
             return any(identifier.is_of_this_type(text) for identifier in self.with_check)
         else:

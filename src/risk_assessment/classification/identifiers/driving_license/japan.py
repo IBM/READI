@@ -1,9 +1,31 @@
+"""Japan driving license identifier for detecting Japanese driver's licenses.
+
+This module provides an identifier for recognizing Japanese driving license
+numbers with support for both English and Japanese text prefixes.
+"""
+
 import re
 
 from risk_assessment.classification.identifiers import RegexIdentifierWithSpan
 
 
 class JapanDrivingLicense(RegexIdentifierWithSpan):
+    """Identifier for Japanese driving license numbers.
+
+    Recognizes 12-digit Japanese driving license numbers with optional
+    prefixes in English or Japanese.
+
+    Attributes:
+        _prefixes: List of valid prefixes in English and Japanese.
+
+    Example:
+        >>> identifier = JapanDrivingLicense()
+        >>> identifier.is_of_this_type("Japan dl# 123456789012")
+        True
+        >>> identifier.is_of_this_type("123456789012")
+        True
+    """
+
     _prefixes = [
         r"Japan dl#",
         r"Japan dls#",
@@ -24,6 +46,7 @@ class JapanDrivingLicense(RegexIdentifierWithSpan):
     ]
 
     def __init__(self) -> None:
+        """Initialize the JapanDrivingLicense identifier with regex pattern."""
         super().__init__(
             "JapanDrivingLicense",
             [

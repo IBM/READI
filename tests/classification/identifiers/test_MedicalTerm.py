@@ -1,6 +1,9 @@
+import pytest
+
 from risk_assessment.classification.identifiers import MedicalTerm
 
 
+@pytest.mark.skip("Missing UMLS data files")
 def test_positive():
     identifier = MedicalTerm(umls_only=False)
 
@@ -17,6 +20,7 @@ def test_positive():
     assert identifier.is_of_this_type("Typhoid Fever".lower()), "Typhoid Fever".lower()
 
 
+@pytest.mark.skip("Missing UMLS data files")
 def test_positive_umls_only():
     identifier = MedicalTerm(umls_only=True)
 

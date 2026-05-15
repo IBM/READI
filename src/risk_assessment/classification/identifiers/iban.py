@@ -1,3 +1,9 @@
+"""IBAN identifier for detecting International Bank Account Numbers.
+
+This module provides an identifier for recognizing and validating IBAN
+(International Bank Account Number) from various countries.
+"""
+
 import logging
 import re
 
@@ -9,6 +15,22 @@ logger = logging.getLogger(__name__)
 
 
 class IBAN(Identifier):
+    """Identifier for IBAN (International Bank Account Number).
+
+    Validates IBANs from multiple countries using country-specific patterns
+    and validation rules. Supports over 70 countries.
+
+    Attributes:
+        prefixes: Dictionary mapping country codes to their validators.
+
+    Example:
+        >>> identifier = IBAN()
+        >>> identifier.is_of_this_type("GB82 WEST 1234 5698 7654 32")
+        True
+        >>> identifier.is_of_this_type("DE89 3704 0044 0532 0130 00")
+        True
+    """
+
     prefixes: dict[str, IBANCountryValidator] = {
         "AD": IBANCountryValidator(re.compile(r"^AD\d{10}[A-Z0-9]{12}$")),
         "AE": IBANCountryValidator(re.compile(r"^AE\d{19,32}$")),
@@ -90,6 +112,14 @@ class IBAN(Identifier):
     }
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid IBAN.
+
+        Args:
+            text: The text to check (spaces are automatically removed).
+
+        Returns:
+            True if text is a valid IBAN for a supported country, False otherwise.
+        """
         text = text.replace(" ", "")
         prefix = text[:2]
 
@@ -99,7 +129,23 @@ class IBAN(Identifier):
         return False
 
     def is_valid_prefix(self, prefix: str) -> bool:
+        """Check if the country prefix is supported.
+
+        Args:
+            prefix: Two-letter country code.
+
+        Returns:
+            True if the country code is supported, False otherwise.
+        """
         return prefix in self.prefixes
 
     def get_country_validator(self, country_prefix: str) -> IBANCountryValidator:
+        """Get the validator for a specific country.
+
+        Args:
+            country_prefix: Two-letter country code.
+
+        Returns:
+            The IBANCountryValidator for the specified country.
+        """
         return self.prefixes[country_prefix]

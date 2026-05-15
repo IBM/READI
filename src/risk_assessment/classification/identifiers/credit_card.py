@@ -1,9 +1,41 @@
+"""Credit card identifier for detecting credit card numbers.
+
+This module provides an identifier for recognizing credit card numbers from
+various card networks including Visa, MasterCard, American Express, Discover,
+JCB, Diners Club, and Maestro. Uses Luhn algorithm for validation.
+"""
+
 import re
 
 from risk_assessment.classification.identifiers import LuhnIdentifier
 
 
 class CreditCard(LuhnIdentifier):
+    """Identifier for credit card numbers with Luhn validation.
+
+    Recognizes credit card numbers from major card networks and validates
+    them using the Luhn checksum algorithm.
+
+    Supported card types:
+    - Visa (16 digits, starts with 4)
+    - MasterCard (16 digits, starts with 51-55 or 2221-2720)
+    - American Express (15 digits, starts with 34 or 37)
+    - Diners Club (14 digits, starts with 300-305 or 36 or 38)
+    - Discover (16 digits, starts with 6011 or 65)
+    - JCB (16 digits, starts with 2131, 1800, or 35)
+    - Maestro (12-19 digits, various prefixes)
+
+    Attributes:
+        patterns: List of compiled regex patterns for different card formats.
+
+    Example:
+        >>> identifier = CreditCard()
+        >>> identifier.is_of_this_type("4532015112830366")  # Valid Visa
+        True
+        >>> identifier.is_of_this_type("1234567890123456")  # Invalid
+        False
+    """
+
     patterns = [
         re.compile(r"^4\d{15}$"),  # visa
         re.compile(r"^4\d{3}(?:[- ]?\d{4}){3}$"),  # visa with formatting
@@ -22,12 +54,30 @@ class CreditCard(LuhnIdentifier):
     ]
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text is a valid credit card number.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches a card pattern and passes Luhn validation, False otherwise.
+        """
         for pattern in self.patterns:
             if pattern.match(text) and self.check_luhn(text):
                 return True
         return False
 
     def debug_values(self, text: str) -> int:
+        """Debug method to check validation status.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            0 if valid (pattern match and Luhn pass),
+            1 if pattern matches but Luhn fails,
+            2 if pattern doesn't match.
+        """
         for pattern in self.patterns:
             if pattern.match(text):
                 if self.check_luhn(text):

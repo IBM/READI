@@ -1,3 +1,10 @@
+"""Date and time identifier for detecting datetime values in various formats.
+
+This module provides identifiers for recognizing dates and times in numerous
+international formats, including ISO formats, localized formats, and formats
+with AM/PM notation.
+"""
+
 import re
 from collections.abc import Callable, Iterable
 from datetime import datetime
@@ -13,6 +20,16 @@ def _compute_unique_patterns(
     ampm_patterns: dict[str, Pattern[str]],
     patterns_with_processing: dict[str, tuple[Pattern[str], Callable[[Match[str]], str]]],
 ) -> str:
+    """Compute unique regex patterns from multiple pattern dictionaries.
+
+    Args:
+        patterns: Dictionary of datetime format patterns.
+        ampm_patterns: Dictionary of AM/PM datetime format patterns.
+        patterns_with_processing: Dictionary of patterns with processing functions.
+
+    Returns:
+        Combined regex pattern string with all unique patterns joined by '|'.
+    """
     unique_patterns: set[str] = set()
 
     for pttrns in [patterns, ampm_patterns]:
@@ -26,6 +43,36 @@ def _compute_unique_patterns(
 
 
 class DateTime(Identifier):
+    """Identifier for date and time values in various formats.
+
+    Supports numerous date and time formats including:
+    - ISO 8601 formats (YYYY-MM-DD, YYYY-MM-DDTHH:MM:SS)
+    - US formats (MM/DD/YYYY, MM-DD-YYYY)
+    - European formats (DD/MM/YYYY, DD-MM-YYYY)
+    - Named month formats (Jan 15, 2020, January 15, 2020)
+    - Japanese formats (YYYY年MM月DD日)
+    - Formats with AM/PM notation
+    - Unix timestamps and various other formats
+
+    Attributes:
+        patterns: Dictionary mapping format strings to compiled regex patterns.
+        ampm_patterns: Dictionary of AM/PM format patterns.
+        patterns_with_processing: Dictionary of patterns requiring preprocessing.
+        unique_patterns: Set of unique regex pattern strings.
+        combined_pattern: Compiled re2 pattern combining all patterns.
+        formats: Set of all supported datetime format strings.
+        fast: If True, uses optimized re2 pattern matching.
+
+    Example:
+        >>> identifier = DateTime()
+        >>> identifier.is_of_this_type("2023-01-15")
+        True
+        >>> identifier.is_of_this_type("Jan 15, 2023")
+        True
+        >>> identifier.is_of_this_type("15/01/2023 14:30:00")
+        True
+    """
+
     patterns: dict[str, Pattern[str]] = {
         r"%d %b %Y %H:%M:%S %z": re.compile(
             r"^\d{1,2} \w{3} \d{4} \d{1,2}:\d{1,2}:\d{1,2} [+-]?\d{2}\d{2}(?:\d{2}(?:\.\d{6})?)?$", re.I | re.U
@@ -307,10 +354,23 @@ class DateTime(Identifier):
     }
 
     def __init__(self, fast: bool = False) -> None:
+        """Initialize the DateTime identifier.
+
+        Args:
+            fast: If True, use optimized re2 pattern matching. Defaults to False.
+        """
         super().__init__()
         self.fast = fast
 
     def is_of_this_type(self, text: str) -> bool:
+        """Check if text represents a valid date/time in any supported format.
+
+        Args:
+            text: The text to check.
+
+        Returns:
+            True if text matches any datetime pattern and can be parsed, False otherwise.
+        """
         if self.fast:
             return _match_pattern(self.combined_pattern, self.formats, text) or _match_patterns_with_code(
                 self.patterns_with_processing.items(), text
@@ -326,6 +386,15 @@ class DateTime(Identifier):
 def _match_patterns_with_code(
     patterns: Iterable[tuple[str, tuple[Pattern[str], Callable[[Match[str]], str]]]], text: str
 ) -> bool:
+    """Match text against patterns that require preprocessing.
+
+    Args:
+        patterns: Iterable of (format, (pattern, processor)) tuples.
+        text: The text to match.
+
+    Returns:
+        True if text matches any pattern after preprocessing, False otherwise.
+    """
     text = _convert_to_all_english(text)
 
     for format, (pattern, code) in patterns:
@@ -338,10 +407,27 @@ def _match_patterns_with_code(
 
 
 def _convert_to_all_english(text: str) -> str:
+    """Convert non-English datetime components to English.
+
+    Args:
+        text: The text to convert.
+
+    Returns:
+        Text with Japanese AM/PM indicators converted to English.
+    """
     return text.replace("午後", "PM").replace("午前", "AM")  # Japanese
 
 
 def _match_format(format: str, text: str) -> bool:
+    """Check if text can be parsed using the given datetime format.
+
+    Args:
+        format: The datetime format string.
+        text: The text to parse.
+
+    Returns:
+        True if text can be parsed with the format, False otherwise.
+    """
     try:
         obj = datetime.strptime(text, format)
         return obj is not None
@@ -350,12 +436,31 @@ def _match_format(format: str, text: str) -> bool:
 
 
 def _match_patterns(patterns: Iterable[tuple[str, Pattern[str]]], text: str) -> bool:
+    """Match text against multiple datetime patterns.
+
+    Args:
+        patterns: Iterable of (format, pattern) tuples.
+        text: The text to match.
+
+    Returns:
+        True if text matches any pattern and can be parsed, False otherwise.
+    """
     text = _convert_to_all_english(text)
 
     return any(_match_format(format, text) for format, pattern in patterns if pattern.match(text))
 
 
 def _match_pattern(pattern: Pattern[str], formats: set[str], text: str) -> bool:
+    """Match text against a combined pattern and try parsing with multiple formats.
+
+    Args:
+        pattern: The compiled regex pattern to match.
+        formats: Set of datetime format strings to try.
+        text: The text to match and parse.
+
+    Returns:
+        True if text matches pattern and can be parsed with any format, False otherwise.
+    """
     text = _convert_to_all_english(text)
 
     if pattern.match(text):

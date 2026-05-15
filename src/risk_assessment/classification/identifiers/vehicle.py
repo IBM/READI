@@ -1,3 +1,9 @@
+"""Vehicle identifier for detecting Vehicle Identification Numbers (VIN).
+
+This module provides an identifier for recognizing and validating VINs
+with checksum verification and World Manufacturer Identifier validation.
+"""
+
 import re
 from re import Pattern
 
@@ -5,6 +11,27 @@ from risk_assessment.classification.identifiers import Identifier
 
 
 class VehicleIdentificationNumber(Identifier):
+    """Identifier for Vehicle Identification Numbers (VIN).
+
+    Validates 17-character VINs using pattern matching, World Manufacturer
+    Identifier (WMI) validation, and checksum verification.
+
+    A VIN consists of:
+    - 3 characters: World Manufacturer Identifier (WMI)
+    - 6 characters: Vehicle Descriptor Section (VDS)
+    - 8 characters: Vehicle Identifier Section (VIS) including check digit
+
+    Attributes:
+        pattern: Regex pattern for VIN format validation.
+        world_manufacturer_identifiers: Set of valid WMI codes.
+        us_wmi: Set of US-specific WMI codes.
+
+    Example:
+        >>> identifier = VehicleIdentificationNumber()
+        >>> identifier.is_of_this_type("1HGBH41JXMN109186")
+        True
+    """
+
     pattern: Pattern[str] = re.compile(
         r"^([ABCDEFGHJKLMNPRSTUVWXYZ0-9]{3})([ABCDEFGHJKLMNPRSTUVWXYZ0-9]{6})([ABCDEFGHJKLMNPRSTUVWXYZ0-9]{8})$"
     )
