@@ -1,9 +1,11 @@
 # 🔒 READI - Risk Evaluation and De-Identification
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![CI](https://github.com/IBM/READI/workflows/CI/badge.svg)](https://github.com/IBM/READI/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/READI.svg)](https://pypi.org/project/READI/)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Lint](https://github.com/IBM/READI/actions/workflows/lint.yml/badge.svg)](https://github.com/IBM/READI/actions/workflows/lint.yml)
+[![Testing](https://github.com/IBM/READI/actions/workflows/testing.yml/badge.svg)](https://github.com/IBM/READI/actions/workflows/testing.yml)
+[![Publish to PyPI](https://github.com/IBM/READI/actions/workflows/publish.yml/badge.svg)](https://github.com/IBM/READI/actions/workflows/publish.yml)
+[![PyPI](https://img.shields.io/pypi/v/READI.svg)](https://pypi.org/project/readi-privacy/)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
