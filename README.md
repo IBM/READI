@@ -206,6 +206,12 @@ READI is built on years of privacy research. Key publications:
 
 ---
 
+## 🙏 Acknowledgment
+
+This project is partly supported by the Innovative Health Initiative Joint Undertaking (IHI JU) under grant agreement No. 101172997 – SEARCH.
+
+---
+
 ## 💬 Support & Community
 
 - 🐛 **Issues**: [GitHub Issues](https://github.com/IBM/READI/issues)
