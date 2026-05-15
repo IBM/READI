@@ -541,7 +541,6 @@ from .geography import UnitedStateState  # noqa
 from .geography import ZipCode  # noqa
 from .healthcare import ATC  # noqa
 from .healthcare import NDC  # noqa
-from .healthcare import UMLS  # noqa
 from .healthcare import DEANumber  # noqa
 from .healthcare import Gene  # noqa
 from .healthcare import HealthcareBeneficiaryNumber  # noqa
