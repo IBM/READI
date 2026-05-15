@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
-from itertools import chain
 from pathlib import Path
 from typing import Any
 
@@ -59,32 +57,3 @@ class AnnotationWriter:
             response["source"] = ",".join(entity.source)
 
         return response
-
-
-@dataclass
-class DocumentMetrics:
-    document_id: str
-    by_char: bool
-    metrics: list[tuple[str, Any]] = field(default_factory=list)
-
-
-def compute_overlapping(
-    by_char: bool, *args: tuple[str, list[Entity]]
-) -> dict[str, list[tuple[str, tuple[float, ...]]]]:
-    sources = [t[0] for t in args]
-    entities = [t[1] for t in args]
-    print(sources)
-
-    entity_types = list({e.entity_type for e in chain(*entities)})
-
-    print(entity_types)
-
-    raise NotImplementedError("Working on it")
-
-
-def extract_document_metrics(
-    document_id: str, annotations: list[tuple[str, list[Entity]]], by_char: bool = False
-) -> DocumentMetrics:
-    return DocumentMetrics(
-        document_id=document_id, by_char=by_char, metrics=[("overlapping", compute_overlapping(by_char, *annotations))]
-    )

@@ -41,5 +41,4 @@ def test_from_datasets():
             else:
                 missed.append(vin)
 
-    print(len(detected))
-    print(len(missed))
+    assert len(detected)

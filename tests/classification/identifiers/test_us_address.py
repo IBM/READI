@@ -11,7 +11,6 @@ def test_multilines():
         "7 Blackmoore Cir\n" + "Dublin, NY 12345",
         "7 Blackmoore Cir\n" + "    Dublin, NY 123450000",
         "40 SOMETHING RD\n" + "City, MA 123121111",
-        # "Apt 1\n" +
         "Dublin, NY 12345",
         "123 BLACKMORE AVE APT 1\n" + "BRONX, NY 12345",
         "123 East Side Mall\n" + "Bronx, NY 12345-6789",
@@ -21,10 +20,6 @@ def test_multilines():
         "123 Cobbleston St\n" + "Westwood, MA 02090",
         "345 Westwood Street\n" + "Watertown, MA 02472-2811",
         "123 TALBOT AVE\n" + "Boston, MA 12345",
-        # # "Apt#123\n" +
-        # "Auburndale, MA 12345",
-        # # "Apt 123\n" +
-        # "Auburndale, MA 12345",
     ]
     identifier = USPostalAddress()
 
@@ -86,11 +81,6 @@ def test_from_rwd():
 
 def test_invalid():
     invalid = [
-        # "40 generic brand",
-        # "12 months and stop CT",
-        # "1 week with pcp Dr.",
-        # "16 per Dr.",
-        # "168 that represents the corresponding ontology file as",
         "500 mg",
         "20 minutes",
         "80 mg after each meal and I suggest that he",
@@ -108,25 +98,12 @@ def test_invalid():
         "130-167 which is significant improvement since increase  in",
         "2 days left upper jaw line near ear is",
         "1 right hand is",
-        # "5 Fixes For Common Sleep Issues All Couples",
-        # "11 states posted land",
-        # "15 Best Stair Tread Rugs Indoor"
-        # "3 Year experience in digital"
     ]
 
     identifier = USPostalAddress()
 
     for line in invalid:
         assert not identifier.is_of_this_type(line), line
-
-
-@pytest.mark.skip("only for internal benchmark")
-def test_bench():
-    start = datetime.datetime.now()
-    for _ in range(100):
-        test_recognize_valid_addresses()
-
-    pytest.fail(f"{(datetime.datetime.now() - start) / 100}")
 
 
 def test_recognize_valid_addresses():
@@ -168,53 +145,3 @@ def test_recognize_valid_addresses():
     identifier = USPostalAddress()
     for address in valid_addresses:
         assert identifier.is_of_this_type(address), address
-
-
-@pytest.mark.skip(reason="Unable to fix it for now")
-def test_rwd_false_positives():
-    examples: list[str] = [
-        "5 Fixes For Common Sleep Issues All Couples",
-        "11 states posted land",
-        "15 Best Stair Tread Rugs Indoor",
-        "3 Year experience in digital",
-        "4 days ago Display Domain Stats or",
-        "1 month its stil 10 bucks",
-        "3 different lighting modes that are available in",
-        "216 clear lights that are available in",
-        "1 Tube Light Set",
-        "50 LED bulbs that are available in",
-        "13 with this comprehensive course from TeachUcomp",
-        "13 Training Tutorial DVD",
-        "3 LED light modes and",
-        "5 hour drive.",
-        "100 learning and development programs in",
-        "2 hours drive",
-        "2015 and available in",
-        "5 star Los Dominicos Station hotel or",
-        "1 minute walk",
-        "4 asset protection strategies every real estate investor",
-        "5 minute walk from Circular Quay Station",
-        "20 million units of demand",
-        "180 Degree Mountain View\nHouse Description",
-        "3331 WARNING PATROLLED AND PROTECT",
-        "66S-Metal 41866",
-    ]
-
-    identifier = USPostalAddress()
-
-    for not_address in examples:
-        assert not identifier.is_of_this_type(not_address), not_address
-
-    logs = """Warning: Declaration of art_MenuWalker::start_lvl(&$output, $depth) should be compatible with Walker::start_lvl(&$output, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 169
-Warning: Declaration of art_MenuWalker::end_lvl(&$output, $depth) should be compatible with Walker::end_lvl(&$output, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 169
-Warning: Declaration of art_MenuWalker::end_el(&$output, $item, $depth) should be compatible with Walker::end_el(&$output, $object, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 169
-Warning: Declaration of art_PageWalker::start_lvl(&$output) should be compatible with Walker::start_lvl(&$output, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 311
-Warning: Declaration of art_PageWalker::end_lvl(&$output) should be compatible with Walker::end_lvl(&$output, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 311
-Warning: Declaration of art_PageWalker::end_el(&$output, $page) should be compatible with Walker::end_el(&$output, $object, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 311
-Warning: Declaration of art_CategoryWalker::start_lvl(&$output) should be compatible with Walker::start_lvl(&$output, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 404
-Warning: Declaration of art_CategoryWalker::end_lvl(&$output) should be compatible with Walker::end_lvl(&$output, $depth = 0, $args = Array) in /home/greescom/domains/thearizonadispensary.com/wp-content/themes/The_Arizona_Dispensary/core/navigation.php on line 404""".split(
-        "\n"
-    )
-
-    for not_address in logs:
-        assert not identifier.is_of_this_type(not_address), not_address

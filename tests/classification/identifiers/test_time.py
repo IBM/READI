@@ -189,7 +189,6 @@ def test_pattern():
     from datetime import datetime
 
     assert datetime.strptime("2020/10/26 7:56:35 AM GMT", "%Y/%m/%d %I:%M:%S %p %Z")
-    # assert datetime.strptime("2020/10/26 7:56:35 AM GMT+9", "%Y/%m/%d %I:%M:%S %p %Z")
     try:
         datetime.strptime("2020/10/26 7:56:35 AM GMT+9", "%Y/%m/%d %I:%M:%S %p %Z")
         assert False

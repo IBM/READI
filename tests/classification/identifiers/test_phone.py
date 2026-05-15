@@ -151,8 +151,6 @@ def test_extract_data_correctly():
 
         assert span is not None, number
 
-        # assertThat(range.getFirst() + range.getSecond(), lessThanOrEqualTo(number.length()));
-
         assert number[span[0] : span[0] + span[1]] == validation
 
 
@@ -160,7 +158,6 @@ def test_it_does_not_detect_wrong_formatted_numbers() -> None:
     identifier = PhoneNumber()
 
     invalid_numbers = [
-        # "4251844",  # commented because valid according to the US
         "873320071105095646",
         "140 39-150",
         "+44",

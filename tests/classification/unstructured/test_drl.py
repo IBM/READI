@@ -135,7 +135,6 @@ def test_from_secBU():
             RegexIdentifier("TICKET_ID", [re.compile(r"SOCP\d+")]),
             RegexIdentifier("USERNAME", [re.compile(r"user ([:alnum:]{3,})")]),
             Phone(),
-            # Name(),
         ],
         tokenizer=WordPunctTokenizer(),
         max_shinglet_length=8,
@@ -151,7 +150,6 @@ def test_weird_pattern():
 
     extractor = DRLEntityExtractor(
         identifiers=[
-            # Name(),
             IP(),
             RegexIdentifier("TICKET_ID", [re.compile(r"SOCP\d+")]),
             RegexIdentifierWithSpan("USERNAME", [re.compile(r"user\s([a-z10-9_]{3,})")]),

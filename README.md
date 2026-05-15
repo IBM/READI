@@ -137,7 +137,7 @@ Explore our comprehensive Jupyter notebooks in the [`notebooks/`](./notebooks) d
 
 ## 📖 Documentation
 
-For detailed documentation, API references, and advanced usage patterns, please visit our [documentation portal](https://github.com/IBM/READI/wiki) *(coming soon)*.
+For detailed documentation, API references, and advanced usage patterns, please visit our [documentation portal](https://github.com/IBM/READI/docs) *(coming soon)*.
 
 ---
 
@@ -155,6 +155,34 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 ## 📄 License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📌 How to Cite
+
+If you use READI in academic work, please cite the most relevant publication from the references below. A general citation entry is:
+
+```bibtex
+@software{readi_ibm,
+  title        = {READI: Risk Evaluation and De-Identification},
+  author       = {Stefano Braghin and Liubov Nedoshivina and Anisa Halimi and Naoise Holohan and Kieran Fraser},
+  year         = {2026},
+  url          = {https://github.com/IBM/READI}
+}
+```
+
+When your usage specifically relates to unstructured document de-identification, prefer citing:
+
+```bibtex
+@article{nedoshivina2024pragmatic,
+  title   = {Pragmatic De-Identification of Cross-Domain Unstructured Documents: A Utility-Preserving Approach with Relation Extraction Filtering},
+  author  = {Liubov Nedoshivina and Anisa Halimi and Joa Bettencourt-Silva and Stefano Braghin},
+  journal = {AMIA Summits on Translational Science Proceedings},
+  volume  = {2024},
+  pages   = {85},
+  year    = {2024}
+}
+```
 
 ---
 
