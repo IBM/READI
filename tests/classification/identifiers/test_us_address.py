@@ -55,24 +55,22 @@ def test_from_rwd():
 
     assert identifier.is_of_this_type("1160 South Main Street 322, Middletown, Connecticut, U.S.A. 06457-5044")
     assert identifier.is_of_this_type("12489 W 84Th DR, ARVADA, Jefferson County, CO")
-    assert identifier.is_of_this_type("12489 W 84Th DR, ARVADA, Jefferson County, CO")
-    assert identifier.is_of_this_type("13992 E 107Th AVE, COMMERCE CITY, Adams County, CO")
-    assert identifier.is_of_this_type("13992 E 107Th AVE, COMMERCE CITY, Adams County, CO")
     assert identifier.is_of_this_type("13992 E 107Th AVE, COMMERCE CITY, Adams County, CO")
     assert identifier.is_of_this_type("16101 Road J, CORTEZ, Montezuma County, CO")
     assert identifier.is_of_this_type("16122 W 70Th AVE, ARVADA, Jefferson County, CO")
+    assert identifier.is_of_this_type("1824 Alto Ln, Lutz, FL 33558")
     assert identifier.is_of_this_type("1824 Alto Ln, Lutz")
-    assert identifier.is_of_this_type("1824 Alto Ln, Lutz, FL 33558 Republican Party of Florida")
     assert identifier.is_of_this_type("415 W. Route 66, 201")
     assert identifier.is_of_this_type("52 Canyon Cove LN, DRAKE, Larimer County, CO")
     assert identifier.is_of_this_type("646 Riverview Trace Ct, Fort Myers, Florida 33916")
-    assert identifier.is_of_this_type("Lutz, FL 33558 Republican Party of Florida")
     assert not identifier.is_of_this_type("1160 South Main Street 322, Middletown, Connecticut, U.S.A. 06457-5044.")
     assert not identifier.is_of_this_type("1824 Alto Ln, Lutz ")
     assert not identifier.is_of_this_type("1824 Alto Ln, Lutz, FL 33558 Republican Party of Florida.")
+    assert not identifier.is_of_this_type("1824 Alto Ln, Lutz, FL 33558 Republican Party of Florida")
     assert not identifier.is_of_this_type("Camera LensesSimply put, the better you understand different")
     assert not identifier.is_of_this_type("Dec 2018 00:00:00 -0000Template - Content graphicsAlex")
     assert not identifier.is_of_this_type("Lutz, FL 33558 Republican Party of Florida.")
+    assert not identifier.is_of_this_type("Lutz, FL 33558 Republican Party of Florida")
 
 
 def test_invalid():
