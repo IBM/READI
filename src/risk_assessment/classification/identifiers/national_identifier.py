@@ -81,7 +81,7 @@ class NIRFrance(Identifier):
     """
 
     pattern = re.compile(
-        r"^([7182]\d{14})$|^([7182])( )(\d{2})( )(\d{2})( )(\d{2})( )(\d{3})( )(\d{3})( )(\d{2})$|^([7128]\d{12} \d{2})$|^([7182]\d{4}2[AB]\d{8})$|^([7182])( )(\d{2})( )(\d{2})( )(2[AB])( )(\d{3})( )(\d{3})( )(\d{2})$"
+        r"^(([7182]\d{14})|([7182])( )(\d{2})( )(\d{2})( )(\d{2})( )(\d{3})( )(\d{3})( )(\d{2})|([7128]\d{12} \d{2})|([7182]\d{4}2[AB]\d{8})|([7182])( )(\d{2})( )(\d{2})( )(2[AB])( )(\d{3})( )(\d{3})( )(\d{2}))$"
     )
 
     def is_of_this_type(self, text: str) -> bool:
@@ -117,7 +117,7 @@ class TINGermany(Identifier):
     """
 
     pattern = re.compile(
-        r"^([1-9]\d{11})$|^([1-9]\d \d{3} \d{3} \d{3})$|^([1-9][0-9])([,])(d{3})([,])(\d{3})([,])(\d{3})$|^([1-9][0-9])([.])(d{3})([.])(\d{3})([.])(\d{3})$|^([1-9][0-9])([\/])(d{3})([\/])(\d{3})([\/])(\d{3})$|^([1-9]\d{10})$"
+        r"^(([1-9]\d{11})|([1-9]\d \d{3} \d{3} \d{3})|([1-9][0-9])([,])(d{3})([,])(\d{3})([,])(\d{3})|([1-9][0-9])([.])(d{3})([.])(\d{3})([.])(\d{3})|([1-9][0-9])([\/])(d{3})([\/])(\d{3})([\/])(\d{3})|([1-9]\d{10}))$"
     )  # noqa
 
     def check_last_digit(self, first_ten_digits: list[str], check_digit: str) -> bool:
@@ -182,7 +182,7 @@ class TINGermany(Identifier):
 
 
 class AadhaarNumber(Identifier):
-    pattern = re.compile(r"^([2-9]\d{3} \d{4} \d{4})$|^([2-9]\d{11})$")
+    pattern = re.compile(r"^(([2-9]\d{3} \d{4} \d{4})|([2-9]\d{11}))$")
 
     def is_of_this_type(self, text: str) -> bool:
         # https://en.wikipedia.org/wiki/Aadhaar
@@ -312,7 +312,7 @@ class ItalianFiscalCode(Identifier):
 
 class MyNumberJapan(Identifier):
     pattern = re.compile(
-        r"^(\d{4}.\d{4}.\d{4})$|^(\d{4},\d{4},\d{4})$|^(\d{4}-\d{4}-\d{4})|(\d{4} \d{4} \d{4})$|^(\d{12})$"
+        r"^((\d{4}.\d{4}.\d{4})|(\d{4},\d{4},\d{4})|(\d{4}-\d{4}-\d{4})|(\d{4} \d{4} \d{4})|(\d{12}))$"
     )
 
     def is_of_this_type(self, text: str) -> bool:
