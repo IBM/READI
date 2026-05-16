@@ -335,12 +335,6 @@ class Aggregator:
         return sorted(split_points)
 
     def validate_entities(self, entity_list: list[Entity], text: str) -> list[Entity]:
-        # validated_entitites: list[Entity] = []
-        # for entity in entity_list:
-        #     if self.validate_entity(entity, text):
-        #         validated_entitites.append(entity)
-        # return validated_entitites
-
         return [entity for entity in entity_list if self.validate_entity(entity, text)]
 
     def validate_entity(self, entity: Entity, text: str) -> bool:
