@@ -1,4 +1,4 @@
-from re import Pattern
+import re
 
 import re2
 
@@ -650,7 +650,7 @@ class USPostalAddress(Identifier):
     def __init__(self) -> None:
         options = re2.Options()
         options.case_sensitive = False
-        self.patterns: list[Pattern[str]] = [
+        self.patterns = [
             re2.compile(
                 r"^(?:"
                 + r"(?:"
@@ -767,8 +767,6 @@ def _check_that_case_is_consistent(text: str) -> bool:
         bool: True if all alphabetic initial letters are consistently upper or lower case,
               False if mixed case is detected
     """
-    import re
-
     # Split on whitespace and commas using proper regex
     tokens = re.split(r"[\s,]+", text)
 
