@@ -342,24 +342,24 @@ class Aggregator:
             return False
 
         if self.configuration.identifiers_list and frozenset(["DRL"]) == entity.source:
-            indentifier = None
+            identifier = None
 
-            for current_indentifier in self.configuration.identifiers_list:
-                if entity.entity_type == current_indentifier.__str__():
-                    indentifier = current_indentifier
+            for current_identifier in self.configuration.identifiers_list:
+                if entity.entity_type == current_identifier.__str__():
+                    identifier = current_identifier
                     break
 
-            if not indentifier:
+            if not identifier:
                 return True
 
             span_to_validate = [entity.start, entity.end]
-            if indentifier.is_need_span():
-                span_to_validate = [max(0, entity.start - indentifier.get_span_length_required_to_check()), entity.end]  # type: ignore
+            if identifier.is_need_span():
+                span_to_validate = [max(0, entity.start - identifier.get_span_length_required_to_check()), entity.end]  # type: ignore
                 for i in range(span_to_validate[0], entity.start):
-                    if indentifier.is_of_this_type(text[i : span_to_validate[1]]):
+                    if identifier.is_of_this_type(text[i : span_to_validate[1]]):
                         return True
 
-            elif indentifier.is_of_this_type(text[span_to_validate[0] : span_to_validate[1]]):
+            elif identifier.is_of_this_type(text[span_to_validate[0] : span_to_validate[1]]):
                 return True
             else:
                 return False
