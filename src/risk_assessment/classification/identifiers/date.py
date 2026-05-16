@@ -8,7 +8,6 @@ with AM/PM notation.
 import re
 from collections.abc import Callable, Iterable
 from datetime import datetime
-from re import Match, Pattern
 from typing import Any
 
 import re2
@@ -17,9 +16,9 @@ from risk_assessment.classification.identifiers import Identifier
 
 
 def _compute_unique_patterns(
-    patterns: dict[str, Pattern[str]],
-    ampm_patterns: dict[str, Pattern[str]],
-    patterns_with_processing: dict[str, tuple[Pattern[str], Callable[[Match[str]], str]]],
+    patterns: dict[str, re.Pattern[str]],
+    ampm_patterns: dict[str, re.Pattern[str]],
+    patterns_with_processing: dict[str, tuple[re.Pattern[str], Callable[[re.Match[str]], str]]],
 ) -> str:
     """Compute unique regex patterns from multiple pattern dictionaries.
 
@@ -43,7 +42,7 @@ def _compute_unique_patterns(
     return "|".join(unique_patterns)
 
 
-_RePatternLike = Pattern[str] | Any
+_RePatternLike = re.Pattern[str] | Any
 
 
 class DateTime(Identifier):
@@ -77,7 +76,7 @@ class DateTime(Identifier):
         True
     """
 
-    patterns: dict[str, Pattern[str]] = {
+    patterns: dict[str, re.Pattern[str]] = {
         r"%d %b %Y %H:%M:%S %z": re.compile(
             r"^\d{1,2} \w{3} \d{4} \d{1,2}:\d{1,2}:\d{1,2} [+-]?\d{2}\d{2}(?:\d{2}(?:\.\d{6})?)?$", re.I | re.U
         ),
@@ -158,7 +157,7 @@ class DateTime(Identifier):
         r"%y年%m・%d": re.compile(r"^\d{2}年\d{1,2}・\d{1,2}$", re.I | re.U),
         r"%y年%m": re.compile(r"^\d{2}年\d{1,2}$", re.I | re.U),
     }
-    ampm_patterns: dict[str, Pattern[str]] = {
+    ampm_patterns: dict[str, re.Pattern[str]] = {
         r"%B %d, %Y %I:%M %p": re.compile(r"^\w{4,} \d{1,2}, \d{4} \d{1,2}:\d{1,2} [AP]M$", re.I | re.U),
         r"%a %b %d, %Y %I:%M %p": re.compile(r"^\w{3} \w{3} \d{1,2}, \d{4} \d{1,2}:\d{1,2} [AP]M$", re.I | re.U),
         r"%d/%m/%Y %I:%M %p": re.compile(r"^\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{1,2} [AP]M$", re.I | re.U),
@@ -180,7 +179,7 @@ class DateTime(Identifier):
             r"^\d{4}/\d{1,2}/\d{1,2} \d{1,2}:\d{1,2}:\d{1,2} [AP]M GMT[+-]\d{1,2}$", re.I | re.U
         ),
     }
-    patterns_with_processing: dict[str, tuple[Pattern[str], Callable[[Match[str]], str]]] = {
+    patterns_with_processing: dict[str, tuple[re.Pattern[str], Callable[[re.Match[str]], str]]] = {
         r"%Y/%m/%d %I:%M:%S %p %Z": (
             re.compile(r"^(\d{4}/\d{1,2}/\d{1,2} \d{1,2}:\d{1,2}:\d{1,2} [AP]M (?:\w{3}))[\+-]\d+$", re.I | re.U),
             lambda m: m.group(1),
@@ -388,7 +387,7 @@ class DateTime(Identifier):
 
 
 def _match_patterns_with_code(
-    patterns: Iterable[tuple[str, tuple[Pattern[str], Callable[[Match[str]], str]]]], text: str
+    patterns: Iterable[tuple[str, tuple[re.Pattern[str], Callable[[re.Match[str]], str]]]], text: str
 ) -> bool:
     """Match text against patterns that require preprocessing.
 
@@ -439,7 +438,7 @@ def _match_format(format: str, text: str) -> bool:
         return False
 
 
-def _match_patterns(patterns: Iterable[tuple[str, Pattern[str]]], text: str) -> bool:
+def _match_patterns(patterns: Iterable[tuple[str, re.Pattern[str]]], text: str) -> bool:
     """Match text against multiple datetime patterns.
 
     Args:

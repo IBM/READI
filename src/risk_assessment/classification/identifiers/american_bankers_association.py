@@ -1,5 +1,4 @@
 import re
-from re import Pattern
 
 from risk_assessment.classification.identifiers import Identifier
 
@@ -57,7 +56,7 @@ def _validate_checksum(federal_reserve_routing: str, aba_institution: str, check
 
 
 class AmericanBankersAssociationNumber(Identifier):
-    pattern: Pattern[str] = re.compile(r"^(\d{4})(\d{4})(\d)$")
+    pattern: re.Pattern[str] = re.compile(r"^(\d{4})(\d{4})(\d)$")
 
     def is_of_this_type(self, text: str) -> bool:
         match = self.pattern.match(text)

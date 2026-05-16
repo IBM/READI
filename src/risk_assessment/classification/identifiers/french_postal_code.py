@@ -1,6 +1,5 @@
 import re
 from pathlib import Path
-from re import Pattern
 
 from risk_assessment.classification.identifiers import Identifier
 
@@ -20,7 +19,7 @@ def _load_valid_zipcodes() -> dict[str, set[str]]:
 
 
 class FrenchPostalCode(Identifier):
-    pattern: Pattern[str] = re.compile(r"^(\d{2})(\d{3})$")
+    pattern: re.Pattern[str] = re.compile(r"^(\d{2})(\d{3})$")
     departments: dict[str, set[str]] = _load_valid_zipcodes()
 
     def is_of_this_type(self, text: str) -> bool:

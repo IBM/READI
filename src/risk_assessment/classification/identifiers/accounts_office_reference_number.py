@@ -1,5 +1,4 @@
 import re
-from re import Pattern
 
 from risk_assessment.classification.identifiers import Identifier
 
@@ -20,7 +19,7 @@ _valid_period_digits: set[str] = {
 
 
 class AccountsOfficeReferenceNumber(Identifier):
-    pattern: Pattern[str] = re.compile(r"^\d{3}P[a-z]\d{7}(?:\d|X)(\d{4})?$", re.I)  # 13 or 16 characters
+    pattern: re.Pattern[str] = re.compile(r"^\d{3}P[a-z]\d{7}(?:\d|X)(\d{4})?$", re.I)  # 13 or 16 characters
 
     def is_of_this_type(self, text: str) -> bool:
         match = self.pattern.match(text)

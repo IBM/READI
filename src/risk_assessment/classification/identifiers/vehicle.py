@@ -4,8 +4,7 @@ This module provides an identifier for recognizing and validating VINs
 with checksum verification and World Manufacturer Identifier validation.
 """
 
-import re
-from re import Pattern
+from re import Pattern, compile
 
 from risk_assessment.classification.identifiers import Identifier
 
@@ -32,7 +31,7 @@ class VehicleIdentificationNumber(Identifier):
         True
     """
 
-    pattern: Pattern[str] = re.compile(
+    pattern: Pattern[str] = compile(
         r"^([ABCDEFGHJKLMNPRSTUVWXYZ0-9]{3})([ABCDEFGHJKLMNPRSTUVWXYZ0-9]{6})([ABCDEFGHJKLMNPRSTUVWXYZ0-9]{8})$"
     )
 
