@@ -1,4 +1,5 @@
 import pytest
+from faker import Faker
 
 from risk_assessment.classification.identifiers import IsraelID
 from risk_assessment.classification.identifiers.national_identifier import (
@@ -39,14 +40,11 @@ def test_israel_national_id(faker):
         assert identifier.is_of_this_type(example), example
 
 
-def test_mexican_curb():
-    examples = [
-        "HEGG560427MVZRRL04",
-    ]
-
+def test_mexican_curp():
     identifier = MexicoCURP()
 
-    for example in examples:
+    faker = Faker("es_MX")
+    for example in [faker.curp() for _ in range(100)]:
         assert identifier.is_of_this_type(example), example
 
 
