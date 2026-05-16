@@ -758,24 +758,40 @@ def _quick_check_there_are_multiple_tokens(text: str) -> bool:
 
 
 def _check_that_case_is_consistent(text: str) -> bool:
-    tokens = text.split(r"[\s+|,]")
+    """Check if the text has consistent casing (all uppercase or all lowercase initial letters).
+
+    Args:
+        text: The text to check for case consistency
+
+    Returns:
+        bool: True if all alphabetic initial letters are consistently upper or lower case,
+              False if mixed case is detected
+    """
+    import re
+
+    # Split on whitespace and commas using proper regex
+    tokens = re.split(r"[\s,]+", text)
 
     upper_count = 0
     lower_count = 0
 
     for token in tokens:
-        if len(token.strip()) == 0:
+        token = token.strip()
+        if not token:
             continue
 
-        begin = token[0]
+        # Get first character
+        first_char = token[0]
 
-        if begin.isalpha():
-            if begin.islower():
+        if first_char.isalpha():
+            if first_char.islower():
                 lower_count += 1
-            elif begin.isupper():
+            elif first_char.isupper():
                 upper_count += 1
-            else:
-                # raise ValueError()
-                return False
+            # Note: Non-ASCII alphabetic characters that are neither upper nor lower
+            # are ignored rather than causing the function to return False
 
-    return not (lower_count > 0 and lower_count > 0)  # either all upper or all lower
+    # Return True if case is consistent: either all upper OR all lower (not both)
+    # If no alphabetic characters found, consider it consistent (return True)
+    has_mixed_case = lower_count > 0 and upper_count > 0
+    return not has_mixed_case
