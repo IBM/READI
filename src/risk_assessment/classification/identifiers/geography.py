@@ -8,6 +8,7 @@ import csv
 import logging
 import re
 from collections.abc import Callable, Iterable
+from contextlib import suppress
 from pathlib import Path
 
 from risk_assessment.classification.identifiers import DictionaryIdentifier, Identifier
@@ -512,13 +513,11 @@ class ZipCode(Identifier):
         """
         text = text.strip()
         if len(text) == 5:
-            try:
+            with suppress(ValueError):
                 int_code = int(text, base=10)
                 for _, (m, M) in self.valid_codes.items():
                     if m <= int_code <= M:
                         return True
-            except ValueError:
-                pass
 
         return False
 

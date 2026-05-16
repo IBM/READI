@@ -4,6 +4,7 @@ This module provides identifiers for recognizing age values, including numeric a
 age expressions with units (years, months, weeks), and age-related phrases.
 """
 
+from contextlib import suppress
 from re import I, Pattern, U, compile
 
 from word2number.w2n import word_to_num
@@ -38,13 +39,11 @@ class Age(Identifier):
         int_value: int = 10_000_000
 
         if isinstance(text, str):
-            try:
+            with suppress(ValueError):
                 int_value = int(text, base=10)
 
                 if text != str(int_value):
                     return False
-            except ValueError:
-                pass
 
         elif isinstance(text, int):
             int_value = text

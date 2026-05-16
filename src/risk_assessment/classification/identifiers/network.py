@@ -4,6 +4,7 @@ This module provides identifiers for recognizing IPv4 addresses, IPv6 addresses,
 IP addresses (both versions), and URIs/URLs.
 """
 
+from contextlib import suppress
 from ipaddress import AddressValueError, IPv4Address, IPv6Address
 from logging import getLogger
 from pathlib import Path
@@ -63,11 +64,9 @@ def _valid_ipv6_hostname(text: str) -> bool:
     Returns:
         True if text is a valid IPv6 address, False otherwise.
     """
-    try:
-        if IPv6Address(text) is not None:
+    with suppress(AddressValueError):
+        if IPv6Address(text):
             return True
-    except AddressValueError:
-        pass
     return False
 
 
@@ -106,11 +105,9 @@ class IPv4(Identifier):
         Returns:
             True if text is a valid IPv4 address, False otherwise.
         """
-        try:
+        with suppress(AddressValueError):
             if IPv4Address(text) is not None:
                 return True
-        except AddressValueError:
-            pass
 
         return False
 
@@ -136,13 +133,11 @@ class IPv6(Identifier):
         Returns:
             True if text is a valid IPv6 address, False otherwise.
         """
-        try:
+        with suppress(AddressValueError):
             if IPv6Address(text) is not None:
                 if text == "::" and not allow_double_colon:
                     return False
                 return True
-        except AddressValueError:
-            pass
 
         return False
 
@@ -211,7 +206,8 @@ class URI(Identifier):
         """
         if len(text.strip()) != len(text):
             return False
-        try:
+
+        with suppress(Exception):
             result = urlparse(text)
 
             if result is not None:
@@ -222,8 +218,5 @@ class URI(Identifier):
                 else:
                     if text.startswith("www.") or text.startswith("mail."):
                         return self.is_of_this_type(f"http://{text}")
-
-        except Exception:
-            return False
 
         return False
