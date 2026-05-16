@@ -1,7 +1,3 @@
-import datetime
-
-import pytest
-
 from risk_assessment.classification.identifiers import USPostalAddress
 
 

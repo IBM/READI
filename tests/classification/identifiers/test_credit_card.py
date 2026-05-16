@@ -1,6 +1,3 @@
-import json
-from pathlib import Path
-
 import pytest
 
 from risk_assessment.classification.identifiers import CreditCard

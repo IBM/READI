@@ -1,8 +1,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from risk_assessment.classification.unstructured import Entity
 from risk_assessment.classification.unstructured.utility import AnnotationWriter
 
