@@ -6,6 +6,7 @@ credit cards, and other PII/PHI identifiers.
 """
 
 from collections import defaultdict
+from contextlib import suppress
 from dataclasses import dataclass
 from typing import Any, cast
 
@@ -45,12 +46,24 @@ def create_instance(identifier_fqn: str) -> Identifier:
     for comp in parts[1:]:
         module = getattr(module, comp)
 
-    if type(module) is type(Identifier):
-        m = module()
-        return cast(Identifier, m)
+    # Verify that module is a class (type) and is a subclass of Identifier
+    if not isinstance(module, type):
+        raise ValueError(
+            f"{identifier_fqn} is not a class. "
+            "Expected a subclass of `risk_assessment.classification.identifiers.Identifier`, "
+            f"but got {type(module).__name__}"
+        )
+
+    try:
+        if issubclass(module, Identifier):
+            return module()
+    except TypeError as e:
+        # issubclass() raises TypeError if module is not a class (shouldn't happen due to isinstance check above)
+        raise ValueError(f"{identifier_fqn} cannot be checked as a subclass: {e}") from e
 
     raise ValueError(
-        f"{identifier_fqn} does not exists or is not a subclass of `risk_assessment.classification.identifiers.Identifier`"
+        f"{identifier_fqn} is not a subclass of `risk_assessment.classification.identifiers.Identifier`. "
+        f"Found class: {module.__name__}"
     )
 
 
