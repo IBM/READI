@@ -1,5 +1,3 @@
-import re
-
 import re2
 
 from risk_assessment.classification.identifiers import Identifier
@@ -633,7 +631,7 @@ STATE_AND_POSSESSIONS: str = (
     r"|TX|Texas"
     r"|UT|Utah"
     r"|VT|Vermont"
-    r"|VA|Virginia[H]"
+    r"|VA|Virginia"
     r"|WA|Washington"
     r"|WV|West Virginia"
     r"|WI|Wisconsin"
@@ -705,7 +703,7 @@ class USPostalAddress(Identifier):
                 + r",?(?:\s+\w{3,})+,?(?:\s+\w{3,})+,?\s+"
                 + STATE_AND_POSSESSIONS
                 + r")"
-                r"|(?:\w{3,}(:?\s+\w{3,})*,?\s+" + STATE_AND_POSSESSIONS + r",?\s+" + ZIP_CODE + r"(?:\s+\w{2,})+)"
+                r"|(?:\w{3,}(?:\s+\w{3,})*,?\s+" + STATE_AND_POSSESSIONS + r",?\s+" + ZIP_CODE + r"(?:\s+\w{2,})+)"
                 r"|(?:\d+(?:\s+\w{3,})*(?:\s+"
                 + SUFFIX
                 + r")?,?\s+"
@@ -768,7 +766,7 @@ def _check_that_case_is_consistent(text: str) -> bool:
               False if mixed case is detected
     """
     # Split on whitespace and commas using proper regex
-    tokens = re.split(r"[\s,]+", text)
+    tokens = re2.split(r"[\s,]+", text)
 
     upper_count = 0
     lower_count = 0

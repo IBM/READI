@@ -4,7 +4,7 @@ from risk_assessment.classification.identifiers import City, Country, CountryCod
 from risk_assessment.classification.identifiers.geography import (
     UKPostCode,
     UnitedStateState,
-    _extract_all_langugage_city_names,
+    _extract_all_language_city_names,
 )
 
 
@@ -182,7 +182,7 @@ def test_uk_postcode_suppors_for_known_formats():
 
 
 def test_all_city_names():
-    identifier = City("data/all_language_city_names.txt", _extract_all_langugage_city_names)
+    identifier = City("data/all_language_city_names.txt", _extract_all_language_city_names)
 
     assert len(identifier.data) == 930425, len(identifier.data)
 
