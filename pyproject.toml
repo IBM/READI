@@ -62,7 +62,7 @@ dev = [
   # "git+https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl",
   # "git+https://github.com/explosion/spacy-models/releases/download/xx_ent_wiki_sm-3.7.0/xx_ent_wiki_sm-3.7.0-py3-none-any.whl",
   "httpx==0.27.2",
-  "notebook==7.2.2",
+  "notebook==7.5.6",
   "pytest-faker",
   "pytest-mock",
   "ruff",
