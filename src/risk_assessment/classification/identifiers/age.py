@@ -140,8 +140,8 @@ class AgeImproved(Identifier):
         compile(r"^deceased\s+([0-9]+)$", I | U),
         compile(r"^died\s+at\s+([0-9]+)$", I | U),
         compile(r"^died\s+([0-9]+)-old\s+age$", I | U),
-        compile(r"^died\s+of\s+([\w|'|-]+\s+){1,3}at\s+([0-9]+)$", I | U),
-        compile(r"^died\s+of\s+([\w|'|-]+\s+){1,3}at\s+age\s+(of\s+)?([0-9]+)$", I | U),
+        compile(r"^died\s+of\s+([\w'|-]+\s+){1,3}at\s+([0-9]+)$", I | U),
+        compile(r"^died\s+of\s+([\w'|-]+\s+){1,3}at\s+age\s+(of\s+)?([0-9]+)$", I | U),
         compile(r"^passed\s+away\s+at\s+age\s+([0-9]+)$", I | U),
     ]
 

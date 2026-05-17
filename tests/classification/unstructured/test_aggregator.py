@@ -333,7 +333,6 @@ def test_aggregation_different_tokenizers():
 
     entities1 = [Entity(len("my_email is: "), len(data), "Email", frozenset(["DRL"]))]
     entities2 = [Entity(len("my_email is: "), len(data), "URI", frozenset(["STANZA"]))]
-    entities3 = [Entity(len("my_email is: "), len("my_email is: john"), "NAME", frozenset(["DRL2"]))]
     entities3 = [
         Entity(len("my_email is: john"), len("my_email is: john.doe"), "NAME", frozenset(["SPACY"])),
         Entity(len("my_email is: john.doe"), len(data), "URI", frozenset(["Spacy"])),
