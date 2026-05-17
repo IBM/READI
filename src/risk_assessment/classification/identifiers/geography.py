@@ -16,19 +16,6 @@ from risk_assessment.classification.identifiers import DictionaryIdentifier, Ide
 logger = logging.getLogger(__name__)
 
 
-def _extract_all_langugage_city_names(file: str) -> list[str]:
-    """Extract city names from a multi-language file.
-
-    Args:
-        file: Path to the file containing city names.
-
-    Returns:
-        List of city names.
-    """
-    with (Path(__file__).parent / file).open("r") as stream:
-        return [line.strip() for line in stream.readlines()]
-
-
 def _extract_city_names(file: str) -> list[str]:
     """Extract city names from a CSV file.
 
@@ -683,7 +670,7 @@ class UnitedStateState(DictionaryIdentifier):
                 "GU",
                 "Guam",
                 "VI",
-                "Vigin Islands",
+                "Virgin Islands",
                 "PR",
                 "Puerto Rico",
                 "FM",
