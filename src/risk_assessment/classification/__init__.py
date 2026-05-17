@@ -130,7 +130,7 @@ class DatasetClassificationConfiguration:
         >>> config = DatasetClassificationConfiguration(
         ...     identifiers=[Email(), Phone()],
         ...     mark_unknown=True,
-        ...     unknonw_type="UNKNOWN"
+        ...     unknown_type="UNKNOWN"
         ... )
     """
 
@@ -139,7 +139,7 @@ class DatasetClassificationConfiguration:
         identifiers: list[Identifier | str],
         strategy: DatasetClassificationStrategy = FrequencyBasedDatasetClassificationStrategy(),
         mark_unknown: bool = True,
-        unknonw_type: str = "UNKNOWN",
+        unknown_type: str = "UNKNOWN",
     ) -> None:
         """Initialize the classification configuration.
 
@@ -147,12 +147,12 @@ class DatasetClassificationConfiguration:
             identifiers: List of Identifier instances or fully qualified name strings.
             strategy: Classification strategy to use (default: frequency-based).
             mark_unknown: Whether to mark unidentified values as unknown (default: True).
-            unknonw_type: Label for unknown values (default: "UNKNOWN").
+            unknown_type: Label for unknown values (default: "UNKNOWN").
         """
         self.identifiers = build_identifiers(identifiers)
         self.strategy = strategy
         self.mark_unknown = mark_unknown
-        self.unknown_type = unknonw_type
+        self.unknown_type = unknown_type
 
 
 @dataclass
