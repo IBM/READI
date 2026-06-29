@@ -1,0 +1,6 @@
+{
+    "extracted_text": "THIS IS ANOTHER ONE JAMES DOE",
+    "entities": [
+        ["JAMES DOE", 20, 29, "PERSON"]
+    ]
+}

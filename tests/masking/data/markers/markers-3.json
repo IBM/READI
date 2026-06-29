@@ -1,0 +1,7 @@
+{
+    "extracted_text": "AND ANOTHER ONE JIM DOE AND JANE DOE",
+    "entities": [
+        ["JANE DOE", 28, 36, "PERSON"],
+        ["JIM DOE", 16, 23, "PERSON"]
+    ]
+}
