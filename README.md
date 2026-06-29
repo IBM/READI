@@ -208,7 +208,7 @@ READI is built on years of privacy research. Key publications:
 
 ## 🙏 Acknowledgment
 
-This project is partly supported by the Innovative Health Initiative Joint Undertaking (IHI JU) under grant agreement No. 101172997 – SEARCH, and by the European Union’s Horizon research and innovation programme under Grant Agreement No. 101298664 - RegulAIze.
+This project is partly supported by the Innovative Health Initiative Joint Undertaking (IHI JU) under Grant Agreement No. 101172997 – SEARCH, and by the European Union’s Horizon research and innovation programme under Grant Agreement No. 101298664 - RegulAIze.
 
 ---
 
