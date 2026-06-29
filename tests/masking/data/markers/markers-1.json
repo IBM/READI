@@ -1,0 +1,6 @@
+{
+    "extracted_text": "THIS IS WHAT I NEED TO PROCESS JOHN DOE",
+    "entities": [
+        ["JOHN DOE", 31, 39, "PERSON"]
+    ]
+}
