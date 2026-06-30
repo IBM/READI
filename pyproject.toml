@@ -27,18 +27,17 @@ classifiers = [
 dependencies = [
     "datasets==4.8.5",
     "fastparquet==2024.5.0",
-    "flair>=0.15.1",
     "google-re2==1.1.20251105",
     "huggingface-hub>=0.34.0,<1.0",
     "mecab-python3==1.0.12",
     "nltk==3.9.4",
     "opt_einsum==3.3.0",
-    "pandas==2.3.2",
+    "pandas==3.0.3",
     "pip>=26.0.0",
     "pyarrow==24.0.0",
     "pytz==2024.1",
     "safetensors==0.4.4",
-    "scipy==1.17.1",
+    "scipy>=1.17.1",
     "spacy==3.8.7",
     "SPARQLWrapper==2.0.0",
     "stanza==1.10.1",
@@ -54,6 +53,9 @@ rest = [
   "fastapi==0.136.1",
   "python-dotenv==1.2.2",
 ]
+flair = [
+  "flair>=0.15.1",
+]
 dev = [
   "bandit",
   "faker",
@@ -61,8 +63,8 @@ dev = [
   # "git+https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl",
   # "git+https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl",
   # "git+https://github.com/explosion/spacy-models/releases/download/xx_ent_wiki_sm-3.7.0/xx_ent_wiki_sm-3.7.0-py3-none-any.whl",
-  "httpx==0.28.1",
-  "notebook==7.6.0",
+  "httpx",
+  "notebook",
   "pytest-faker",
   "pytest-mock",
   "ruff",

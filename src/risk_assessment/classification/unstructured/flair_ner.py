@@ -1,7 +1,11 @@
 from typing import Any
 
-from flair.data import Sentence
-from flair.models import SequenceTagger
+try:
+    from flair.data import Sentence
+    from flair.models import SequenceTagger
+except ImportError:
+    Sentence = None  # type: ignore[assignment,misc]
+    SequenceTagger = None  # type: ignore[assignment]
 
 from risk_assessment.classification.unstructured import Entity, EntityExtractor
 
@@ -23,6 +27,10 @@ class FLAIREntityExtractor(EntityExtractor):
         nlp_model: Any = None,
         nlp_model_name: str = "spacy",
     ) -> None:
+        if SequenceTagger is None:
+            raise ImportError(
+                "The 'flair' package is required to use FLAIREntityExtractor. " "Install it with: pip install flair"
+            )
         if type_mapping is None:
             type_mapping = {}
         super().__init__(type_mapping)
@@ -40,6 +48,7 @@ class FLAIREntityExtractor(EntityExtractor):
         return sentences
 
     def extract(self, text: str) -> list[Entity]:
+        assert Sentence is not None
         sentences = self.split_text_into_sentences(text)
         entities: list[Entity] = []
         sentences_shift = find_sentences_shift(text, sentences)
