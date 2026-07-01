@@ -17,8 +17,4 @@ Irish culture has had a significant influence on other cultures, especially in t
     assert entities
     assert len(entities) == 99
 
-    print(entities)
-
-    assert False
-
     assert len({entity.entity_type for entity in entities}) == 11
