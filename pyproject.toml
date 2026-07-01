@@ -25,10 +25,9 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "datasets==4.8.5",
+    "datasets==5.0.0",
     "fastparquet==2024.5.0",
     "google-re2==1.1.20251105",
-    "huggingface-hub>=0.34.0,<1.0",
     "mecab-python3==1.0.12",
     "nltk==3.9.4",
     "opt_einsum==3.3.0",
@@ -38,19 +37,18 @@ dependencies = [
     "pytz==2024.1",
     "safetensors==0.4.4",
     "scipy>=1.17.1",
-    "spacy==3.8.7",
+    "spacy==3.8.14",
     "SPARQLWrapper==2.0.0",
-    "stanza==1.10.1",
-    "tika==2.6.0",
-    "torch~=2.6.0",
-    "transformers==4.57.6",
+    "stanza==1.13.0",
+    "tika==3.1.0",
+    "torch~=2.12.1",
     "unidic-lite==1.0.8",
     "urllib3==2.7.0",
     "word2number==1.1",
 ]
 [project.optional-dependencies]
 rest = [
-  "fastapi==0.136.1",
+  "fastapi==0.138.2",
   "python-dotenv==1.2.2",
 ]
 flair = [

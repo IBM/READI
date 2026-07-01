@@ -29,7 +29,7 @@ class FLAIREntityExtractor(EntityExtractor):
     ) -> None:
         if SequenceTagger is None:
             raise ImportError(
-                "The 'flair' package is required to use FLAIREntityExtractor. " "Install it with: pip install flair"
+                "The 'flair' package is required to use FLAIREntityExtractor. Install it with: pip install flair"
             )
         if type_mapping is None:
             type_mapping = {}
