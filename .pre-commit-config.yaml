@@ -43,16 +43,16 @@ repos:
     hooks:
     - id: bandit
       args: [-c, 'bandit.yaml']
--   repo: https://github.com/srstevenson/nb-clean
-    rev: '4.0.1'
-    hooks:
-      - id: nb-clean
-        args:
-          - --remove-empty-cells
-          - --preserve-cell-metadata
-          - tags
-          - slideshow
-          - --
+# -   repo: https://github.com/srstevenson/nb-clean
+#     rev: '4.0.1'
+#     hooks:
+#       - id: nb-clean
+#         args:
+#           - --remove-empty-cells
+#           - --preserve-cell-metadata
+#           - tags
+#           - slideshow
+#           - --
 -   repo: https://github.com/ibm/detect-secrets
     rev: 0.13.1+ibm.64.dss
     hooks:
