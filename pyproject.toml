@@ -69,6 +69,7 @@ dev = [
   "pytest-asyncio",
   "ty",
   "prek",
+  "ucimlrepo",
 ]
 
 [project.urls]
