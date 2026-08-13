@@ -107,6 +107,6 @@ def test_correctness_zayatz():
 
     estimated_ratio = estimate / population_size
     real_ratio = 22026 / population_size
-    assert math.isclose(
-        estimated_ratio, real_ratio, abs_tol=0.1
-    ), f"{estimated_ratio} not close to {real_ratio} by {abs(estimated_ratio - real_ratio)}"
+    assert math.isclose(estimated_ratio, real_ratio, abs_tol=0.1), (
+        f"{estimated_ratio} not close to {real_ratio} by {abs(estimated_ratio - real_ratio)}"
+    )
