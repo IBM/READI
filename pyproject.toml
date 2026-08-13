@@ -102,6 +102,7 @@ artifacts = [
   "src/risk_assessment/classification/identifiers/healthcare/data/*.csv",
   "src/risk_assessment/classification/identifiers/healthcare/data/en/*.csv",
   "src/risk_assessment/classification/identifiers/healthcare/data/en/*.parquet",
+  "src/risk_assessment/utility/datatypes/data/*.csv",
 ]
 
 [tool.hatch.version]
