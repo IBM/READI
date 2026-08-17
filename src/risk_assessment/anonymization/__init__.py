@@ -84,7 +84,7 @@ class EntropyLDiversity(PrivacyConstraint):
         return math.log(self.l) <= entropy
 
 
-def _numeric_histogram_and_oder(values: Series) -> tuple[Series, Any]:
+def _numeric_histogram_and_oder(values: Series) -> tuple[Series, Series]:
     ordered_values = values.copy()
     ordered_values.sort_values()
 
@@ -94,7 +94,7 @@ def _numeric_histogram_and_oder(values: Series) -> tuple[Series, Any]:
     )
 
 
-def _categorica_histogram_and_oder(values: Series) -> tuple[Series, Any]:
+def _categorica_histogram_and_oder(values: Series) -> tuple[Series, Series]:
     ordered_values = values.copy()
     ordered_values.sort_values()
 
@@ -106,9 +106,9 @@ def _categorica_histogram_and_oder(values: Series) -> tuple[Series, Any]:
 
 def _initialize_histograms_and_order(
     dataset: DataFrame, column_information: list[ColumnInformation]
-) -> tuple[list[Series | None], list[Any | None]]:
+) -> tuple[list[Series | None], list[Series | None]]:
     histograms: list[Series | None] = []
-    orders: list[Any | None] = []
+    orders: list[Series | None] = []
 
     for index, c_i in enumerate(column_information):
         if c_i.column_type == ColumnType.SENSITIVE:
@@ -148,14 +148,15 @@ class TCloseness(PrivacyConstraint):
                 order = self.orders[index]
                 histogram = self.histograms[index]
 
+                if order is None or histogram is None:
+                    raise RuntimeError("Sensitive column has uninitialized histogram or order")
+
                 if not self._check(dataset[dataset.columns[index]], c_i, histogram, order):
                     return False
 
         return True
 
-    def _check(
-        self, values: Series, column_information: ColumnInformation, histogram: Series, order: Series | None
-    ) -> bool:
+    def _check(self, values: Series, column_information: ColumnInformation, histogram: Series, order: Series) -> bool:
         if column_information.column_class == ColumnClass.CATEGORICAL:
             return self._check_categorical(values, histogram, order)
         elif column_information.column_class == ColumnClass.NUMERIC:

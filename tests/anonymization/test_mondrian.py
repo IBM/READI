@@ -72,6 +72,7 @@ def test_mondrian_numerical_hole():
 def test_mondrian_numerical_100():
     K = 3
 
+    assert __package__ is not None
     res = importlib.resources.files(__package__).joinpath("data/100.csv")
     with res.open("r") as iostream:
         dataset = pd.read_csv(iostream, header=None)
@@ -114,7 +115,7 @@ def test_mondrian_numerical_100():
     ).size()
 
     for equivalence_class_size in equivalence_class_sizes:
-        assert equivalence_class_size >= K  # type: ignore
+        assert equivalence_class_size >= K
 
 
 def test_mondrian_categorical():
@@ -167,7 +168,7 @@ def test_mondrian_categorical():
     ).size()
 
     for equivalence_class_size in equivalence_class_sizes:
-        assert equivalence_class_size >= k  # type: ignore
+        assert equivalence_class_size >= k
 
     assert report
 
@@ -222,7 +223,7 @@ def test_mondrian_categorical_hierarchy_based():
     ).size()
 
     for equivalence_class_size in equivalence_class_sizes:
-        assert equivalence_class_size >= k  # type: ignore
+        assert equivalence_class_size >= k
 
     assert report
 

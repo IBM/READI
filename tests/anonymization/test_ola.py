@@ -312,6 +312,7 @@ def test_inconsistency_in_input_structure_additional_column_information():
 
 
 def test_no_transofrmation_is_applied_with_no_quasi():
+    assert __package__ is not None
     res = importlib.resources.files(__package__).joinpath("data/random1.csv")
     with res.open("r") as iostream:
         dataset = pd.read_csv(iostream, header=None)
