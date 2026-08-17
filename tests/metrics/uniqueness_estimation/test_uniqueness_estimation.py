@@ -1,6 +1,6 @@
 import math
 
-from pandas import DataFrame  # type: ignore
+from pandas import DataFrame
 
 from risk_assessment.metrics.informationloss import ColumnClass, ColumnInformation, ColumnType
 from risk_assessment.metrics.uniqueness_estimation import ZayatzEstimatorOptions, zayatz_estimator

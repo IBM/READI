@@ -1,12 +1,13 @@
 from importlib.resources import files
 from pathlib import Path
 
-import pandas as pd  # type: ignore
+import pandas as pd
 
 from risk_assessment.masking import cleanse_dataframe_field
 
 
 def test_cleanse():
+    assert __package__ is not None
     res = files(__package__) / "data" / "data.csv"
     with res.open() as iostream:
         data = pd.read_csv(iostream, header=None)
@@ -20,6 +21,7 @@ def test_cleanse():
 
 
 def test_cleanse_with_headers():
+    assert __package__ is not None
     res = files(__package__).joinpath("data/data_with_headers.csv")
     with res.open() as iostream:
         data = pd.read_csv(iostream)

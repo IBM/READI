@@ -428,6 +428,6 @@ class OLA(AnonymizationAlgorithm):
 
         for partition in partitions:
             if not checker._check_constraints(partition[1]):
-                dataset.drop(index=partition[1].index, inplace=True)
+                dataset = dataset.drop(index=list(partition[1].index))
 
         return dataset

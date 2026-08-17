@@ -1,6 +1,6 @@
 import importlib.resources
 
-import pandas as pd  # type: ignore
+import pandas as pd
 from pandas import DataFrame
 
 from risk_assessment.anonymization import DistinctLDiversity, EntropyLDiversity, KAnonymity, TCloseness
@@ -169,6 +169,7 @@ def test_tcloseness_hierarchical_distance2():
 
 
 def test_tcloseness_numeric():
+    assert __package__ is not None
     res = importlib.resources.files(__package__).joinpath("data/100_with_row_id.csv")
     with res.open("r") as iostream:
         dataset = pd.read_csv(iostream, header=None)
@@ -186,6 +187,7 @@ def test_tcloseness_numeric():
 
 
 def test_tcloseness_categorical():
+    assert __package__ is not None
     res = importlib.resources.files(__package__).joinpath("data/100_with_row_id.csv")
     with res.open("r") as iostream:
         dataset = pd.read_csv(iostream, header=None)

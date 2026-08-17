@@ -34,6 +34,7 @@ dependencies = [
     "pandas==3.0.3",
     "pip>=26.0.0",
     "pyarrow==24.0.0",
+    "python-dotenv==1.2.2",
     "pytz==2024.1",
     "safetensors==0.4.4",
     "scipy>=1.17.1",
@@ -49,7 +50,6 @@ dependencies = [
 [project.optional-dependencies]
 rest = [
   "fastapi==0.138.2",
-  "python-dotenv==1.2.2",
 ]
 flair = [
   "flair>=0.15.1",

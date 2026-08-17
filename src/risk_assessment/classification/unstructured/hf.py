@@ -45,7 +45,11 @@ class HFEntityExtractor(EntityExtractor):
             self.device = "cpu"
 
         self.ner = pipeline(
-            "ner", model=self.model, tokenizer=self.tokenizer, device=self.device, aggregation_strategy="first"
+            "token-classification",
+            model=self.model,
+            tokenizer=self.tokenizer,
+            device=self.device,
+            aggregation_strategy="first",
         )
         self.score_thr = score_thr
         self.extractor_name = extractor_name
