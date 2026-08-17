@@ -4,8 +4,8 @@ try:
     from flair.data import Sentence
     from flair.models import SequenceTagger
 except ImportError:
-    Sentence = None  # type: ignore[assignment,misc]
-    SequenceTagger = None  # type: ignore[assignment]
+    Sentence = None
+    SequenceTagger = None
 
 from risk_assessment.classification.unstructured import Entity, EntityExtractor
 
