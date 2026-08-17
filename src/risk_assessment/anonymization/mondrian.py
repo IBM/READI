@@ -305,12 +305,14 @@ class MondrianPartition:
         return True
 
     def anonymize_dataset(self) -> DataFrame:
+        self._dataset = self._dataset.copy()
         for index, middle in enumerate(self._middles):
             if middle is None:
                 continue
 
-            # self._dataset.iloc[:, index] = self._dataset.iloc[:, index].astype(dtype=str)
-            self._dataset.iloc[:, index] = middle
+            column_name = self._dataset.columns[index]
+            self._dataset[column_name] = self._dataset[column_name].astype(object)
+            self._dataset[column_name] = middle
 
         return self._dataset
 
