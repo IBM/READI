@@ -20,9 +20,11 @@ class OLAOptions:
     information_loss: Callable[[DataFrame, DataFrame, list[ColumnInformation]], float] = categorical_precision
 
 
-def hierarchy_encoder_generator(hierarchy: GeneralizationHierarchy, level: int) -> Callable[Any, []]:
+def hierarchy_encoder_generator(hierarchy: GeneralizationHierarchy, level: int) -> Callable[[Any], Any]:
     def hierarchy_encoder(value: Any) -> Any:
         return hierarchy.encode(value, level)
+
+    return hierarchy_encoder
 
 
 def _generalized_dataset(
@@ -44,7 +46,7 @@ def _generalized_dataset(
             dataset[column_name] = dataset[column_name].transform(
                 # lambda value: hierarchy.encode(value, generalization_levels[index])
                 hierarchy_encoder_generator(hierarchy, generalization_levels[index])
-            )  # type: ignore
+            )
         elif column.column_class == ColumnClass.NUMERIC:
             hierarchy = column.hierarchy
 
@@ -61,7 +63,7 @@ def _generalized_dataset(
     return dataset
 
 
-def _partition_dataset(dataset: DataFrame, column_information: list[ColumnInformation]) -> DataFrameGroupBy:  # type: ignore
+def _partition_dataset(dataset: DataFrame, column_information: list[ColumnInformation]) -> DataFrameGroupBy:
     return dataset.groupby(
         by=[
             dataset.columns[index]
@@ -232,7 +234,7 @@ class Lattice:
             return
 
         for node in nodes:
-            if None is node.is_anonymous:
+            if node.is_anonymous is None:
                 self._nodes_checked += 1
                 is_anonymous: bool = self._check_anonymity(node)
                 self._tag_nodes(node, is_anonymous)
@@ -398,7 +400,7 @@ class OLA(AnonymizationAlgorithm):
         best_information_loss = math.inf
 
         for node in nodes:
-            if node is not None and None is not node.information_loss:
+            if node is not None and node.information_loss is not None:
                 if best_information_loss > node.information_loss:
                     best_information_loss = node.information_loss
                     best_node = node
