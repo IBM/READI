@@ -322,7 +322,7 @@ class MondrianPartition:
         return f"{min}-{max}"
 
 
-def _calculate_cardinality(data: Series) -> float:  # type: ignore
+def _calculate_cardinality(data: Series) -> float:
     return len(data.unique())
 
 

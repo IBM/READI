@@ -5,12 +5,12 @@ from math import log2
 from typing import Any
 
 from pandas import (
-    DataFrame,  # type: ignore
-    Series,  # type: ignore
-    concat,  # type: ignore
+    DataFrame,
+    Series,
+    concat,
 )
-from pandas.core.groupby.generic import DataFrameGroupBy  # type: ignore
-from pandas.core.indexes.base import Index  # type: ignore
+from pandas.core.groupby.generic import DataFrameGroupBy
+from pandas.core.indexes.base import Index
 
 from risk_assessment.utility.hierarchy import GeneralizationHierarchy, NumericalRange
 
@@ -56,7 +56,9 @@ class ColumnInformation:
 
 
 def _extract_quasi_identifiers(data: DataFrame, column_information: list[ColumnInformation]) -> list[str]:
-    return [data.columns[index] for index, c_i in enumerate(column_information) if c_i.column_type == ColumnType.QUASI]
+    return [
+        str(data.columns[index]) for index, c_i in enumerate(column_information) if c_i.column_type == ColumnType.QUASI
+    ]
 
 
 def average_equivalence_class_size(
@@ -70,8 +72,8 @@ def average_equivalence_class_size(
     number_equivalence_classes = 0.0
 
     for partition_size in partition_sizes:
-        if partition_size > 0:  # type: ignore
-            number_equivalence_classes += 1.0  # type: ignore
+        if partition_size > 0:
+            number_equivalence_classes += 1.0
 
     number_of_records = len(original)
     average_equivalence_class_size = number_of_records / number_equivalence_classes
@@ -103,7 +105,7 @@ def _get_loss_categorical(value: Any, column_information: ColumnInformation) -> 
 
 
 def _report_for_column_without_transformation_level(
-    original: Series, anonymized: Series, column_information: ColumnInformation
+    original: Series | DataFrame, anonymized: Series | DataFrame, column_information: ColumnInformation
 ) -> float:
     # if column_information.column_class != ColumnClass.CATEGORICAL:
     #     raise ValueError("Cannot process non categorical colums")
@@ -181,11 +183,11 @@ def discernibility(
     non_anonymous_partitions = 0
 
     for partition_size in partition_sizes:
-        if partition_size >= options.k:  # type: ignore
-            value += partition_size**2  # type: ignore
+        if partition_size >= options.k:
+            value += partition_size**2
         else:
-            value += partition_size * number_of_records  # type: ignore
-            non_anonymous_partitions += partition_size  # type: ignore
+            value += partition_size * number_of_records
+            non_anonymous_partitions += partition_size
 
     value += number_of_records * (number_of_records - len(anonymized) - non_anonymous_partitions)
 
@@ -200,8 +202,8 @@ def discernibility_star(
     value = 0.0
 
     for partition_size in partitions_sizes:
-        if partition_size > 0:  # type: ignore
-            value += partition_size**2  # type: ignore
+        if partition_size > 0:
+            value += partition_size**2
 
     return value
 
