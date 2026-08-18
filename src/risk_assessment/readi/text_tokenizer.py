@@ -1,3 +1,20 @@
+"""Token-level and sentence-level text tokenizers for the READI pipeline.
+
+This module provides the tokenization layer used by entity extractors that
+require text to be split into word/token spans with their positions preserved
+relative to the original string.
+
+Classes:
+
+- :class:`BaseTokenizer` — abstract interface for span tokenizers.
+- :class:`TextTokenizer` — composes a :class:`~risk_assessment.readi.sentence_tokenizer.SentenceTokenizer`
+  with a span tokenizer to produce token spans aligned to the full document.
+- :class:`LMTokenizer` — HuggingFace ``AutoTokenizer``-backed span tokenizer
+  for language-model based extractors.
+- :class:`JapaneseTokenizer` — MeCab-backed morphological tokenizer for
+  Japanese text.
+"""
+
 import warnings
 from abc import ABC, abstractmethod
 
@@ -11,12 +28,37 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
 class BaseTokenizer(ABC):
+    """Abstract base class for span tokenizers.
+
+    A span tokenizer maps raw text to a list of ``(start, end)`` character
+    positions, one per token.
+    """
+
     @abstractmethod
     def span_tokenize(self, text: str) -> list[tuple[int, int]]:
+        """Tokenize *text* and return character-level spans.
+
+        Args:
+            text: Input text.
+
+        Returns:
+            List of ``(start, end)`` tuples (end exclusive) for each token.
+        """
         raise NotImplementedError()
 
 
 class TextTokenizer:
+    """Two-level tokenizer: first splits text into sentences, then into tokens.
+
+    Combines a :class:`~risk_assessment.readi.sentence_tokenizer.SentenceTokenizer`
+    with a span tokenizer so that all token spans are expressed as offsets
+    within the full document rather than within individual sentences.
+
+    Attributes:
+        sentence_tokenizer: Sentence-level splitter.
+        span_tokenizer: Token-level splitter applied to each sentence.
+    """
+
     def __init__(
         self, sentence_tokenizer: SentenceTokenizer, span_tokenizer: WordPunctTokenizer | BaseTokenizer
     ) -> None:
@@ -54,11 +96,22 @@ class TextTokenizer:
         spans = [(span[0] + sentence_position, span[1] + sentence_position) for span in spans_sentence_level]
         return sentence_by_token, spans
 
-    def tokenize_sentenses(
+    def tokenize_sentences(
         self,
         sentences: list[str],
         sentence_positions: list[tuple[int, int]],
     ) -> tuple[list[list[str]], list[list[tuple[int, int]]]]:
+        """Tokenize a list of sentences, aligning spans to the full document.
+
+        Args:
+            sentences: Pre-split sentence strings.
+            sentence_positions: ``(start, end)`` positions of each sentence
+                within the original document.
+
+        Returns:
+            A tuple ``(tokens_per_sentence, spans_per_sentence)`` where each
+            inner list corresponds to one sentence.
+        """
         sentences_by_token: list[list[str]] = []
         sentences_by_spans: list[list[tuple[int, int]]] = []
         for i, sentence in enumerate(sentences):
@@ -79,7 +132,24 @@ class TextTokenizer:
 
 
 class LMTokenizer(BaseTokenizer):
+    """HuggingFace language-model tokenizer that returns character-level spans.
+
+    Wraps an ``AutoTokenizer`` and converts its token-to-character mappings
+    into ``(start, end)`` spans compatible with the READI pipeline.
+
+    Attributes:
+        device: Target device string (e.g. ``"cpu"`` or ``"cuda"``).
+        tokenizer: Loaded HuggingFace tokenizer instance.
+    """
+
     def __init__(self, model_name: str = "FacebookAI/roberta-base", device: str = "cpu") -> None:
+        """Load the tokenizer from a HuggingFace model name or local path.
+
+        Args:
+            model_name: Model identifier passed to ``AutoTokenizer.from_pretrained``.
+                Defaults to ``"FacebookAI/roberta-base"``.
+            device: Device string for downstream model inference. Defaults to ``"cpu"``.
+        """
         self.device = device
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)  # nosec
 
@@ -95,7 +165,17 @@ class LMTokenizer(BaseTokenizer):
 
 
 class JapaneseTokenizer(BaseTokenizer):
+    """MeCab-based morphological tokenizer for Japanese text.
+
+    Uses MeCab to split Japanese text into morpheme spans aligned to the
+    original whitespace-separated substrings.
+
+    Attributes:
+        preprocessor: MeCab tagger instance used for morphological analysis.
+    """
+
     def __init__(self) -> None:
+        """Initialise MeCab tagger."""
         self.preprocessor = MeCab.Tagger()
 
     def span_tokenize(self, text: str) -> list[tuple[int, int]]:

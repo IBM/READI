@@ -1,7 +1,7 @@
 [project]
 name = "readi-privacy"
 dynamic = ["version"]
-description = "A collection of funcionality to perform data classification, data privacy risk assessment, and enforce mitigation"
+description = "A collection of functionality to perform data classification, data privacy risk assessment, and enforce mitigation"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 authors = [
@@ -16,13 +16,14 @@ classifiers = [
   "Development Status :: 4 - Beta",
   # Indicate who your project is intended for
   "Intended Audience :: Developers",
-  "Topic :: Software Development :: Build Tools",
+  "Intended Audience :: Science/Research",
+  "Topic :: Security",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
 
   # Specify the Python versions you support here.
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "datasets==5.0.0",

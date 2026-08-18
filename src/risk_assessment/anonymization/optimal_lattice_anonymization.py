@@ -1,3 +1,34 @@
+"""Optimal Lattice Anonymization (OLA) algorithm.
+
+OLA explores a generalization lattice using binary search to find the
+minimally-generalizing solution that satisfies the configured privacy
+constraints within the allowed suppression budget.  It is more
+computationally efficient than exhaustive lattice search because it
+narrows the search space by tagging anonymous/non-anonymous regions and
+propagating those tags to successors and predecessors.
+
+The key components are:
+
+- :class:`OLAOptions` — algorithm configuration.
+- :class:`LatticeNode` — a single point in the generalization lattice,
+  representing a vector of per-column generalization levels.
+- :class:`Lattice` — the full generalization lattice with binary-search
+  exploration logic.
+- :class:`AnonymityChecker` — evaluates a lattice node's suppression rate
+  and information loss.
+- :class:`OLA` — the top-level algorithm implementing
+  :class:`~risk_assessment.anonymization.AnonymizationAlgorithm`.
+
+Example::
+
+    from risk_assessment.anonymization import KAnonymity
+    from risk_assessment.anonymization.optimal_lattice_anonymization import OLA, OLAOptions
+
+    options = OLAOptions(privacy_constraints=[KAnonymity(k=5)], suppression=5.0)
+    ola = OLA(options)
+    anonymized_df, report = ola.anonymize(df, column_information)
+"""
+
 from __future__ import annotations
 
 import math
@@ -15,6 +46,17 @@ from risk_assessment.utility.hierarchy import GeneralizationHierarchy
 
 @dataclass
 class OLAOptions:
+    """Configuration for the OLA anonymization algorithm.
+
+    Attributes:
+        privacy_constraints: One or more constraints every partition must satisfy.
+        suppression: Maximum percentage of rows that may be suppressed
+            (0.0 = no suppression allowed). Defaults to 0.0.
+        information_loss: Callable used to measure information loss between the
+            original and generalized datasets. Defaults to
+            :func:`~risk_assessment.metrics.informationloss.categorical_precision`.
+    """
+
     privacy_constraints: list[PrivacyConstraint]
     suppression: float = 0.0
     information_loss: Callable[[DataFrame, DataFrame, list[ColumnInformation]], float] = categorical_precision
@@ -108,6 +150,19 @@ class AnonymityChecker:
 
 @dataclass(eq=True)
 class LatticeNode:
+    """A single node in the generalization lattice.
+
+    Each node represents a vector of per-column generalization levels.
+    A higher level means more generalization for that quasi-identifier column.
+
+    Attributes:
+        values: Per-column generalization levels (one entry per quasi-identifier).
+        suppression_rate: Fraction of rows suppressed at this node (set during exploration).
+        is_anonymous: Whether this node satisfies all privacy constraints (set during exploration).
+        information_loss: Information loss measured at this node (set during exploration).
+        tagged: Whether this node has been evaluated.
+    """
+
     values: list[int]
     suppression_rate: float | None = None
     is_anonymous: bool | None = None
@@ -115,6 +170,7 @@ class LatticeNode:
     tagged: bool = False
 
     def sum(self) -> int:
+        """Return the total generalization level (sum of all per-column levels)."""
         return sum(self.values)
 
     def is_decendent(self, other: LatticeNode) -> bool:
@@ -341,12 +397,38 @@ class Lattice:
 
 
 class OLA(AnonymizationAlgorithm):
+    """Optimal Lattice Anonymization algorithm.
+
+    Finds the generalization with minimal information loss that satisfies all
+    privacy constraints within the configured suppression budget, using binary
+    search over the generalization lattice.
+
+    Args:
+        options: Algorithm configuration.
+    """
+
     def __init__(self, options: OLAOptions):
         self._options = options
 
     def anonymize(
         self, dataset: DataFrame, column_information: list[ColumnInformation]
     ) -> tuple[DataFrame, AnonymizationReport]:
+        """Anonymize the dataset using OLA.
+
+        Args:
+            dataset: The input DataFrame. Quasi-identifier columns will be
+                generalized according to the best lattice node found.
+            column_information: Per-column metadata. Length must equal the
+                number of columns in ``dataset``.
+
+        Returns:
+            A tuple of ``(anonymized_dataset, report)``.
+
+        Raises:
+            ValueError: If ``column_information`` length does not match the
+                number of dataset columns.
+            RuntimeError: If no suitable generalization can be found.
+        """
         if len(column_information) != len(dataset.columns):
             raise ValueError(
                 f"Dataset and column information are inconsisten in shape {len(dataset)} vs {len(column_information)}"

@@ -1,3 +1,14 @@
+"""Population uniqueness estimation using the Zayatz hypergeometric estimator.
+
+Provides a statistical estimate of the proportion of records that are unique
+in the full population, based on the equivalence-class size distribution
+observed in a sample.  This is useful for quantifying re-identification risk
+without access to the complete population dataset.
+
+Reference: Zayatz, L. (1991). *Using the Hypergeometric Model for Disclosure
+Avoidance*, US Bureau of the Census Statistical Research Division.
+"""
+
 from dataclasses import dataclass
 from typing import Any
 
@@ -13,12 +24,36 @@ def _for_linking(columns: Index, column_information: list[ColumnInformation]) ->
 
 @dataclass
 class ZayatzEstimatorOptions:
+    """Options for the Zayatz population uniqueness estimator.
+
+    Attributes:
+        population_size: Total size of the population from which the sample
+            was drawn.  Used by the hypergeometric distribution.
+    """
+
     population_size: int
 
 
 def zayatz_estimator(
     sample: DataFrame, column_information: list[ColumnInformation], options: ZayatzEstimatorOptions
 ) -> float:
+    """Estimate the proportion of population-unique records in *sample*.
+
+    Uses the Zayatz hypergeometric model to infer, from the sample's
+    equivalence-class distribution, how many records in the full population
+    have a unique combination of linking attributes.
+
+    Args:
+        sample: A sample DataFrame.  Linking columns are identified via
+            ``column_information``.
+        column_information: Per-column metadata; columns with
+            ``for_linking=True`` are used for grouping.
+        options: Estimator options including the known population size.
+
+    Returns:
+        Estimated fraction of records that are unique in the full population.
+        Returns 0.0 if no singleton equivalence classes are found in the sample.
+    """
     sum = 0.0
 
     equivalence_class_sizes: dict[int, int] = {}
