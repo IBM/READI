@@ -4,7 +4,12 @@ import pandas as pd
 import pytest
 
 from risk_assessment.anonymization import DistinctLDiversity, KAnonymity
-from risk_assessment.anonymization.optimal_lattice_anonymization import OLA, OLAOptions
+from risk_assessment.anonymization.optimal_lattice_anonymization import (
+    OLA,
+    LatticeNode,
+    OLAOptions,
+    _generalized_dataset,
+)
 from risk_assessment.metrics.informationloss import ColumnClass, ColumnInformation, ColumnType
 from risk_assessment.utility.hierarchy import MaterializedHierarchy
 from risk_assessment.utility.hierarchy.datatypes import DummyHierarchy
@@ -324,3 +329,77 @@ def test_no_transofrmation_is_applied_with_no_quasi():
     assert len(anonymized) == len(dataset)
     assert report.generalization_levels is not None
     assert len(report.generalization_levels) == 0
+
+
+def test_select_minimal_loss_raises_when_no_node_has_information_loss():
+    ola = OLA(OLAOptions([KAnonymity(3)]))
+
+    with pytest.raises(RuntimeError):
+        ola._select_minimal_loss_on_level([LatticeNode([0]), LatticeNode([1])])
+
+
+def test_anonymize_returns_original_dataset_when_best_node_is_not_anonymous(monkeypatch: pytest.MonkeyPatch):
+    dataset = pd.DataFrame({"value": ["a", "b"]})
+    column_information = [ColumnInformation(ColumnType.QUASI, ColumnClass.CATEGORICAL, hierarchy=DummyHierarchy())]
+    ola = OLA(OLAOptions([KAnonymity(3)]))
+    best_node = LatticeNode([0], suppression_rate=0.0, is_anonymous=False, information_loss=0.0)
+
+    class FakeLattice:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def explore(self) -> None:
+            pass
+
+        def k_minimal_nodes(self) -> list[LatticeNode]:
+            return [best_node]
+
+    monkeypatch.setattr("risk_assessment.anonymization.optimal_lattice_anonymization.Lattice", FakeLattice)
+
+    anonymized, report = ola.anonymize(dataset, column_information)
+
+    assert anonymized.equals(dataset)
+    assert not report.anonymized
+
+
+def test_anonymize_raises_when_lattice_has_no_suitable_generalization(monkeypatch: pytest.MonkeyPatch):
+    dataset = pd.DataFrame({"value": ["a", "b"]})
+    column_information = [ColumnInformation(ColumnType.QUASI, ColumnClass.CATEGORICAL, hierarchy=DummyHierarchy())]
+    ola = OLA(OLAOptions([KAnonymity(3)]))
+
+    class FakeLattice:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def explore(self) -> None:
+            pass
+
+        def k_minimal_nodes(self) -> list[LatticeNode]:
+            return []
+
+    monkeypatch.setattr("risk_assessment.anonymization.optimal_lattice_anonymization.Lattice", FakeLattice)
+
+    with pytest.raises(RuntimeError, match="Unable to find suitable generalization"):
+        ola.anonymize(dataset, column_information)
+
+
+def test_generalized_dataset_requires_hierarchy_for_quasi_columns():
+    dataset = pd.DataFrame({"value": ["a"]})
+    column_information = [ColumnInformation(ColumnType.QUASI, ColumnClass.CATEGORICAL)]
+
+    with pytest.raises(ValueError, match="Hierarchy for column value is not defined"):
+        _generalized_dataset(dataset, column_information, [0])
+
+
+def test_generalized_dataset_rejects_unsupported_column_class():
+    dataset = pd.DataFrame({"value": ["a"]})
+    column_information = [
+        ColumnInformation(
+            ColumnType.QUASI,
+            ColumnClass.NONE,
+            hierarchy=DummyHierarchy(),
+        )
+    ]
+
+    with pytest.raises(ValueError, match="Support for categorical and numerical at the moment"):
+        _generalized_dataset(dataset, column_information, [0])

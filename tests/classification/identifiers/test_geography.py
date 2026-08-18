@@ -1,4 +1,5 @@
 import pytest
+from faker import Faker
 
 from risk_assessment.classification.identifiers import City, Country, CountryCode, CountryName, ZipCode
 from risk_assessment.classification.identifiers.geography import (
@@ -108,7 +109,8 @@ def test_city_name(faker):
     assert len(missed) / done < 0.005, missed  # account for Faker having a larger dictionary than us
 
 
-def test_us_state(faker, faker_locale_us):
+def test_us_state():
+    faker = Faker("en_US")
     identifier = UnitedStateState()
 
     for _ in range(100):

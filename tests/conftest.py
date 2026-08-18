@@ -7,10 +7,5 @@ def faker_locale_us():
 
 
 @pytest.fixture()
-def faker_locale_it():
-    return ["it_IT"]
-
-
-@pytest.fixture()
 def faker_locale_ja():
     return ["ja_JP"]

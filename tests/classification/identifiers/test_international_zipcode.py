@@ -1,4 +1,5 @@
 import pytest
+from faker import Faker
 
 from risk_assessment.classification.identifiers import InternationalZipcode
 
@@ -13,7 +14,8 @@ def test_basic_testing():
 
 
 @pytest.mark.skip("Faker is generating nonexisting zipcodes")
-def test_us_zipcode(faker, faker_locale_us):
+def test_us_zipcode():
+    faker = Faker("en_US")
     identifier = InternationalZipcode()
 
     for _ in range(1_000):

@@ -10,7 +10,6 @@ from risk_assessment.metrics.informationloss import ColumnClass, ColumnInformati
 from risk_assessment.utility.hierarchy import MaterializedHierarchy
 
 
-@pytest.mark.xfail(reason="Importlib issue should be fixed")
 def test_anonymity_checked():
     k = 3
 
@@ -46,10 +45,21 @@ def test_anonymity_checked():
         ColumnInformation(ColumnType.QUASI, ColumnClass.CATEGORICAL, hierarchy=age_hierarchy),
     ]
 
-    assert __package__ is not None
-    res = importlib.resources.files(__package__).joinpath("data/testOLA.csv")
-    with res.open("r") as iostream:
-        dataset = pd.read_csv(iostream, header=None)
+    dataset = pd.DataFrame(
+        data=[
+            line.split(",")
+            for line in """01/01/2008,M,18,Cancer
+01/01/2008,M,18,Cancer
+01/01/2008,M,18,HIV
+01/01/2008,M,13,HIV
+01/01/2008,M,19,HIV
+02/01/2008,F,18,Pneumonia
+02/01/2008,F,22,Pneumonia
+02/01/2008,F,23,Pneumonia
+02/01/2008,F,21,Flu
+01/01/2008,M,22,Flu""".split("\n")
+        ]
+    )
     dataset.rename(columns={number: f"Column {number}" for number in range(len(column_information))}, inplace=True)
 
     privacy_constraint: list[PrivacyConstraint] = [KAnonymity(k)]

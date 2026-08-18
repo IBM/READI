@@ -5,7 +5,15 @@ import pytest
 from pandas import DataFrame
 
 from risk_assessment.anonymization import AnonymizationReport, KAnonymity
-from risk_assessment.anonymization.mondrian import Mondrian, MondrianOptions, MondrianSplitStrategy
+from risk_assessment.anonymization.mondrian import (
+    Interval,
+    Mondrian,
+    MondrianOptions,
+    MondrianPartition,
+    MondrianSplitStrategy,
+    _create_middles_and_widths,
+    _find_common_ancestor,
+)
 from risk_assessment.metrics.informationloss import ColumnClass, ColumnInformation, ColumnType
 from risk_assessment.utility.hierarchy import MaterializedHierarchy, NumericalRange
 from risk_assessment.utility.hierarchy.datatypes import DummyHierarchy
@@ -269,3 +277,80 @@ def test_inconsistency_in_input_structure_additional_column_information():
 
     with pytest.raises(ValueError):
         mondrian.anonymize(dataset, column_information)
+
+
+def test_find_common_ancestor_raises_for_empty_values():
+    hierarchy = MaterializedHierarchy(
+        [
+            ["Greece", "Europe", "*"],
+            ["Italy", "Europe", "*"],
+        ]
+    )
+
+    with pytest.raises(RuntimeError, match="No nodes for the values"):
+        _find_common_ancestor(pd.Series(dtype=object).to_numpy(), hierarchy)
+
+
+def test_create_middles_and_widths_requires_hierarchy_for_categorical_quasi():
+    dataset = DataFrame({"country": ["Greece", "Italy"]})
+    column_information = [ColumnInformation(ColumnType.QUASI, ColumnClass.CATEGORICAL)]
+
+    with pytest.raises(ValueError, match="Missing hierarchy for country"):
+        _create_middles_and_widths(dataset, column_information)
+
+
+def test_create_middles_and_widths_requires_range_for_numeric_quasi():
+    dataset = DataFrame({"age": [20, 30]})
+    column_information = [ColumnInformation(ColumnType.QUASI, ColumnClass.NUMERIC)]
+
+    with pytest.raises(ValueError, match="Missing value range for age"):
+        _create_middles_and_widths(dataset, column_information)
+
+
+def test_partition_choose_dimension_returns_minus_one_when_all_widths_are_nan():
+    dataset = DataFrame({0: [5, 5, 5], 1: [7, 7, 7]})
+    column_information = [
+        ColumnInformation(ColumnType.QUASI, ColumnClass.NUMERIC, range=NumericalRange(dataset[0])),
+        ColumnInformation(ColumnType.QUASI, ColumnClass.NUMERIC, range=NumericalRange(dataset[1])),
+    ]
+    partition = MondrianPartition(
+        dataset,
+        ["5", "7"],
+        [Interval(5, 5), Interval(7, 7)],
+        column_information,
+        MondrianOptions([KAnonymity(2)]),
+    )
+
+    assert partition.choose_dimension() == -1
+
+
+def test_partition_split_raises_for_unsupported_quasi_column_class():
+    dataset = DataFrame({0: ["a", "b"]})
+    column_information = [ColumnInformation(ColumnType.QUASI, ColumnClass.NONE)]
+    partition = MondrianPartition(
+        dataset,
+        [None],
+        [Interval(0, 1)],
+        column_information,
+        MondrianOptions([KAnonymity(1)]),
+    )
+
+    with pytest.raises(ValueError, match="Column class not supported"):
+        partition.split(0)
+
+
+def test_partition_normalized_width_requires_width_entry():
+    dataset = DataFrame({0: [1, 2]})
+    column_information = [
+        ColumnInformation(ColumnType.QUASI, ColumnClass.NUMERIC, range=NumericalRange(dataset[0])),
+    ]
+    partition = MondrianPartition(
+        dataset,
+        ["1-2"],
+        [None],
+        column_information,
+        MondrianOptions([KAnonymity(1)]),
+    )
+
+    with pytest.raises(ValueError, match="Column 0 does not have assiciated width"):
+        partition._get_normalized_width(0)
