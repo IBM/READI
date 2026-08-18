@@ -1,3 +1,5 @@
+from faker import Faker
+
 from risk_assessment.classification.identifiers import PESELPoland
 
 
@@ -16,3 +18,14 @@ def test_PESELPoland_centuries():
     assert identifier.is_of_this_type("12311678904"), "12311678904"  # 2000-2099
     assert identifier.is_of_this_type("12711678906"), "12711678906"  # 2200-2299
     assert identifier.is_of_this_type("12511678900"), "12511678900"  # 2100-2199
+
+
+def test_PESELPoland_faker():
+    fake = Faker("pl_PL")
+
+    identifier = PESELPoland()
+
+    # Generate and validate multiple PESEL numbers
+    for _ in range(10):
+        pesel = fake.pesel()
+        assert identifier.is_of_this_type(pesel), f"Generated PESEL {pesel} should be valid"

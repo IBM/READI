@@ -1,4 +1,4 @@
-import pytest
+from faker import Faker
 
 from risk_assessment.classification.identifiers import ItalianFiscalCode
 
@@ -30,8 +30,8 @@ def test_invalid():
         assert not identifier.is_of_this_type(invalid), invalid
 
 
-@pytest.mark.skip("Needs to fix faker_locale for italian")
-def test_positive(faker, faker_locale_it):
+def test_positive():
+    faker = Faker("it_IT")
     identifier = ItalianFiscalCode()
 
     for _ in range(100):
