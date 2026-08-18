@@ -1,3 +1,32 @@
+"""Information-loss metrics for evaluating anonymized datasets.
+
+This module provides a collection of functions and supporting types for
+measuring how much information is lost when a dataset is generalized or
+suppressed during anonymization.
+
+Column roles are described by :class:`ColumnType` (normal, direct, quasi,
+sensitive) and :class:`ColumnClass` (numeric, categorical).  Per-column
+metadata is held in :class:`ColumnInformation`.
+
+Available metrics:
+
+- :func:`categorical_precision` — weighted average generalization level
+  across quasi-identifier columns (lower is better).
+- :func:`discernibility` — penalty-based metric that penalizes large
+  equivalence classes and suppressed rows.
+- :func:`discernibility_star` — variant of discernibility without suppression
+  penalty.
+- :func:`non_uniform_entropy` — entropy-based metric measuring information
+  loss per record.
+- :func:`non_uniform_entropy_upper_bound` — upper bound for non-uniform entropy.
+- :func:`generalized_loss_metric` — loss based on the fraction of the value
+  range or hierarchy covered by each generalized value.
+- :func:`global_certain_penalty` — normalized sum of within-partition
+  value-range penalties.
+- :func:`average_equivalence_class_size` — mean partition size, optionally
+  normalized by *k*.
+"""
+
 from dataclasses import dataclass
 from enum import Enum, auto
 from hashlib import md5
@@ -17,21 +46,49 @@ from risk_assessment.utility.hierarchy import GeneralizationHierarchy, Numerical
 
 @dataclass
 class AverageEquivalenceClassSizeOptions:
+    """Options for the average equivalence-class size metric.
+
+    Attributes:
+        normalized: When True, the result is divided by *k*.
+        k: Target equivalence-class size (used for normalization).
+    """
+
     normalized: bool
     k: int
 
 
 @dataclass
 class DiscernibilityOptions:
+    """Options for the discernibility metric.
+
+    Attributes:
+        k: Minimum acceptable equivalence-class size.
+    """
+
     k: int
 
 
 @dataclass
 class NonUniformEntropyOptions:
+    """Options for the non-uniform entropy metric.
+
+    Attributes:
+        k: Minimum acceptable equivalence-class size.
+    """
+
     k: int
 
 
 class ColumnType(Enum):
+    """Role of a dataset column in the anonymization process.
+
+    Attributes:
+        NORMAL: Column carries no special role.
+        DIRECT: Direct identifier (e.g. name, ID) — typically suppressed entirely.
+        QUASI: Quasi-identifier used for grouping into equivalence classes.
+        SENSITIVE: Sensitive attribute whose distribution must be protected.
+    """
+
     NORMAL = auto()
     DIRECT = auto()
     QUASI = auto()
@@ -39,6 +96,14 @@ class ColumnType(Enum):
 
 
 class ColumnClass(Enum):
+    """Data type of a dataset column.
+
+    Attributes:
+        NUMERIC: Column contains numeric values.
+        CATEGORICAL: Column contains categorical (string) values.
+        NONE: Column class is unspecified or not applicable.
+    """
+
     NUMERIC = auto()
     CATEGORICAL = auto()
     NONE = auto()
@@ -46,6 +111,22 @@ class ColumnClass(Enum):
 
 @dataclass
 class ColumnInformation:
+    """Metadata describing a single dataset column for anonymization.
+
+    Attributes:
+        column_type: Role of this column (normal, direct, quasi, sensitive).
+        column_class: Data type of this column (numeric or categorical).
+        weight: Relative weight when computing weighted information-loss metrics.
+            Defaults to 1.0.
+        hierarchy: Generalization hierarchy for categorical or numeric columns.
+            Required for quasi-identifier columns.
+        range: Numerical range used for numeric quasi-identifier columns.
+        max_level: Maximum allowed generalization level for OLA exploration.
+            ``-1`` means no limit.
+        for_linking: When True, this column is used for record linkage in
+            uniqueness estimation.
+    """
+
     column_type: ColumnType = ColumnType.NORMAL
     column_class: ColumnClass = ColumnClass.NONE
     weight: float = 1.0
@@ -67,6 +148,17 @@ def average_equivalence_class_size(
     column_information: list[ColumnInformation],
     options: AverageEquivalenceClassSizeOptions,
 ) -> float:
+    """Compute the average equivalence-class size of an anonymized dataset.
+
+    Args:
+        original: The original (un-anonymized) DataFrame.
+        anonymized: The anonymized DataFrame.
+        column_information: Per-column metadata.
+        options: Metric options (normalization flag and target *k*).
+
+    Returns:
+        Average number of records per equivalence class, optionally divided by *k*.
+    """
     partition_sizes = anonymized.groupby(by=_extract_quasi_identifiers(anonymized, column_information)).size()
 
     number_equivalence_classes = 0.0
@@ -161,6 +253,21 @@ def categorical_precision(
     column_information: list[ColumnInformation],
     transformation_levels: list[int] | None = None,
 ) -> float:
+    """Compute the weighted average generalization level across quasi-identifier columns.
+
+    A value of 0.0 means no generalization; 1.0 means full generalization to
+    the top of every hierarchy.
+
+    Args:
+        original: The original DataFrame (used for suppression accounting).
+        anonymized: The anonymized DataFrame.
+        column_information: Per-column metadata including hierarchies and weights.
+        transformation_levels: Optional fixed generalization levels per quasi column.
+            If None, levels are inferred from the anonymized values.
+
+    Returns:
+        Mean precision loss in the range [0.0, 1.0].
+    """
     column_results: list[float] = _categorical_precision_report_per_quasi_column(
         original, anonymized, column_information, transformation_levels
     )
@@ -175,6 +282,20 @@ def discernibility(
     column_information: list[ColumnInformation],
     options: DiscernibilityOptions,
 ) -> float:
+    """Compute the discernibility metric for an anonymized dataset.
+
+    Penalizes each record by the size of its equivalence class if it is
+    anonymous, or by the total number of records if it is suppressed.
+
+    Args:
+        original: The original DataFrame.
+        anonymized: The anonymized DataFrame.
+        column_information: Per-column metadata.
+        options: Metric options containing the target *k*.
+
+    Returns:
+        Discernibility penalty (lower is better).
+    """
     partition_sizes = anonymized.groupby(by=_extract_quasi_identifiers(anonymized, column_information)).size()
 
     number_of_records = len(original)
@@ -256,6 +377,21 @@ def non_uniform_entropy(
     column_information: list[ColumnInformation],
     options: NonUniformEntropyOptions,
 ) -> float:
+    """Compute the non-uniform entropy information-loss metric.
+
+    Measures entropy-based information loss by comparing the original and
+    anonymized value distributions per quasi-identifier column within each
+    equivalence class.
+
+    Args:
+        original: The original DataFrame (same size and row order as *anonymized*).
+        anonymized: The anonymized DataFrame.
+        column_information: Per-column metadata.
+        options: Metric options containing the target *k*.
+
+    Returns:
+        Total non-uniform entropy value (lower is better).
+    """
     # assumption: original and anonymized datasets are of the same size and that datasets' records are in the same order
     original_frequencies = _calculate_frequencies(original, column_information)
     anonymized_frequencies = _calculate_frequencies(anonymized, column_information)
@@ -396,6 +532,20 @@ def _get_value_loss(value: Any, column_information: ColumnInformation) -> float:
 def generalized_loss_metric(
     dataset: DataFrame, anonymized: DataFrame, column_information: list[ColumnInformation]
 ) -> float:
+    """Compute the generalized loss metric (GLM) for an anonymized dataset.
+
+    For each cell in a quasi-identifier column, GLM computes the fraction of
+    the hierarchy range (categorical) or numeric range covered by the
+    generalized value.  Suppressed rows are penalized with a loss of 1.
+
+    Args:
+        dataset: The original DataFrame.
+        anonymized: The anonymized DataFrame.
+        column_information: Per-column metadata including hierarchies and weights.
+
+    Returns:
+        Weighted mean GLM across all columns and records (lower is better).
+    """
     loss_per_column: list[float] = [0.0 for _ in range(len(dataset.columns))]
 
     for row in anonymized.iterrows():

@@ -1,3 +1,22 @@
+"""Privacy constraints and base classes for data anonymization algorithms.
+
+This module provides the foundational abstractions for dataset anonymization,
+including the abstract base classes for anonymization algorithms and privacy
+constraints, as well as concrete implementations of the most common privacy
+models: k-Anonymity, l-Diversity (Distinct and Entropy variants), and
+t-Closeness.
+
+Typical usage::
+
+    from risk_assessment.anonymization import KAnonymity, TCloseness
+    from risk_assessment.anonymization.mondrian import Mondrian, MondrianOptions
+
+    constraints = [KAnonymity(k=5), TCloseness(t=0.2)]
+    options = MondrianOptions(privacy_constraints=constraints)
+    mondrian = Mondrian(options)
+    anonymized_df, report = mondrian.anonymize(df, column_information)
+"""
+
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -12,35 +31,96 @@ from risk_assessment.utility import calculate_entropy, extract_histograms
 
 @dataclass
 class AnonymizationReport:
+    """Result report produced by an anonymization algorithm.
+
+    Attributes:
+        anonymized: Whether the dataset was successfully anonymized.
+        suppression_rate: Fraction of rows suppressed (0.0–100.0). Defaults to 0.0.
+        generalization_levels: Per-column generalization levels applied, if available.
+    """
+
     anonymized: bool
     suppression_rate: float = 0.0
     generalization_levels: list[int] | None = None
 
 
 class AnonymizationAlgorithm(ABC):
+    """Abstract base class for anonymization algorithms.
+
+    Subclasses implement the ``anonymize`` method to transform a dataset so that
+    it satisfies the configured privacy constraints.
+    """
+
     @abstractmethod
     def anonymize(
         self, dataset: DataFrame, column_information: list[ColumnInformation]
     ) -> tuple[DataFrame, AnonymizationReport]:
+        """Anonymize the dataset.
+
+        Args:
+            dataset: The input DataFrame to anonymize.
+            column_information: Metadata describing each column's type, class,
+                and associated hierarchy or range.
+
+        Returns:
+            A tuple of ``(anonymized_dataset, report)`` where ``report``
+            summarises whether anonymization succeeded and at what cost.
+        """
         pass
 
 
 class PrivacyConstraint(ABC):
+    """Abstract base class for privacy constraints.
+
+    A privacy constraint defines the condition that each equivalence class
+    (partition) in an anonymized dataset must satisfy.
+    """
+
     @abstractmethod
     def check(self, dataset: DataFrame, column_information: list[ColumnInformation]) -> bool:
+        """Check whether the partition satisfies this constraint.
+
+        Args:
+            dataset: A single equivalence-class partition of the full dataset.
+            column_information: Metadata describing each column.
+
+        Returns:
+            True if the constraint is satisfied, False otherwise.
+        """
         pass
 
 
 @dataclass
 class KAnonymity(PrivacyConstraint):
+    """k-Anonymity privacy constraint.
+
+    A partition satisfies k-Anonymity when it contains at least *k* records,
+    ensuring that each individual is indistinguishable from at least k-1 others
+    with respect to the quasi-identifier attributes.
+
+    Attributes:
+        k: Minimum required equivalence-class size.
+    """
+
     k: int
 
     def check(self, dataset: DataFrame, column_information: list[ColumnInformation]) -> bool:
+        """Return True if the partition has at least k records."""
         return len(dataset) >= self.k
 
 
 @dataclass
 class DistinctLDiversity(PrivacyConstraint):
+    """Distinct l-Diversity privacy constraint.
+
+    A partition satisfies Distinct l-Diversity when every sensitive attribute
+    column contains at least *l* distinct values, limiting the ability to infer
+    a specific sensitive value for any individual.
+
+    Attributes:
+        l: Minimum number of distinct sensitive values required per partition.
+    """
+
     l: int  # noqa: E741
 
     def check(self, dataset: DataFrame, column_information: list[ColumnInformation]) -> bool:
@@ -59,6 +139,17 @@ class DistinctLDiversity(PrivacyConstraint):
 
 @dataclass
 class EntropyLDiversity(PrivacyConstraint):
+    """Entropy l-Diversity privacy constraint.
+
+    A partition satisfies Entropy l-Diversity when, for every sensitive column,
+    the Shannon entropy of the value distribution is at least log(l).  This is
+    a stronger guarantee than Distinct l-Diversity because it also requires the
+    values to be roughly evenly distributed.
+
+    Attributes:
+        l: Minimum entropy threshold expressed as log(l).
+    """
+
     l: int  # noqa: E741
 
     def check(self, dataset: DataFrame, column_information: list[ColumnInformation]) -> bool:
@@ -129,6 +220,19 @@ def _initialize_histograms_and_order(
 
 
 class TCloseness(PrivacyConstraint):
+    """t-Closeness privacy constraint.
+
+    A partition satisfies t-Closeness when the distribution of each sensitive
+    attribute within the partition is no further than *t* from the distribution
+    in the full dataset, measured using the Earth Mover's Distance (categorical)
+    or the ordered-distance metric (numerical).
+
+    Call :meth:`initialize` with the full dataset before using :meth:`check`.
+
+    Attributes:
+        t: Maximum allowed distance between the partition and global distributions.
+    """
+
     def __init__(self, t: float):
         self.t = t
         self.histograms: list[Series | None] | None = None
@@ -136,6 +240,14 @@ class TCloseness(PrivacyConstraint):
         self.total_count: int | None = None
 
     def initialize(self, dataset: DataFrame, column_information: list[ColumnInformation]) -> None:
+        """Pre-compute global histograms and value ordering from the full dataset.
+
+        Must be called once before :meth:`check` is used on individual partitions.
+
+        Args:
+            dataset: The complete (un-partitioned) dataset.
+            column_information: Metadata describing each column.
+        """
         (self.histograms, self.orders) = _initialize_histograms_and_order(dataset, column_information)
         self.total_count = len(dataset)
 

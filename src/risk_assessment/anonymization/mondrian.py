@@ -1,3 +1,32 @@
+"""Mondrian multidimensional partitioning anonymization algorithm.
+
+Mondrian recursively partitions a dataset along quasi-identifier dimensions,
+splitting each partition at the median of the widest dimension until no further
+split satisfies the configured privacy constraints.  The result is a set of
+equivalence classes whose quasi-identifier columns are replaced by a
+representative value (the "middle"), producing a k-anonymous (or stronger)
+dataset.
+
+Two split strategies are supported:
+
+- ``ORDER_BASED`` (default): splits at the numerical/index-order median.
+- ``HIERARCHY_BASED``: splits according to the children of the current node
+  in the generalization hierarchy.
+
+Example::
+
+    from risk_assessment.anonymization import KAnonymity
+    from risk_assessment.anonymization.mondrian import Mondrian, MondrianOptions, MondrianSplitStrategy
+    from risk_assessment.metrics.informationloss import ColumnInformation, ColumnType, ColumnClass
+
+    options = MondrianOptions(
+        privacy_constraints=[KAnonymity(k=3)],
+        split_strategy=MondrianSplitStrategy.ORDER_BASED,
+    )
+    mondrian = Mondrian(options)
+    anonymized_df, report = mondrian.anonymize(df, column_information)
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -15,22 +44,48 @@ from risk_assessment.utility.hierarchy import GeneralizationHierarchy, Generaliz
 
 
 class MondrianSplitStrategy(Enum):
+    """Strategy used to split a partition along a quasi-identifier dimension.
+
+    Attributes:
+        HIERARCHY_BASED: Split by descending into the children of the current
+            generalization-hierarchy node.
+        ORDER_BASED: Split at the median of the values' index in the hierarchy
+            (categorical) or of the raw numerical values.
+    """
+
     HIERARCHY_BASED = auto()
     ORDER_BASED = auto()
 
 
 @dataclass
 class Interval:
+    """Numeric interval used to track the value range of a partition dimension.
+
+    Attributes:
+        low: Lower bound of the interval (inclusive).
+        high: Upper bound of the interval (inclusive).
+        median: Optional pre-computed median of the interval.
+    """
+
     low: float
     high: float
     median: float | None = None
 
     def range(self) -> float:
+        """Return the width of the interval (high - low)."""
         return self.high - self.low
 
 
 @dataclass
 class MondrianOptions:
+    """Configuration for the Mondrian anonymization algorithm.
+
+    Attributes:
+        privacy_constraints: One or more privacy constraints (e.g. KAnonymity)
+            that each resulting partition must satisfy.
+        split_strategy: How to split partitions. Defaults to ORDER_BASED.
+    """
+
     privacy_constraints: list[PrivacyConstraint]
     split_strategy: MondrianSplitStrategy = MondrianSplitStrategy.ORDER_BASED
 
@@ -362,12 +417,38 @@ def _create_middles_and_widths(
 
 
 class Mondrian(AnonymizationAlgorithm):
+    """Mondrian multidimensional partitioning anonymization algorithm.
+
+    Recursively splits the dataset into equivalence classes along the widest
+    quasi-identifier dimension until no split satisfying the privacy constraints
+    can be found.
+
+    Args:
+        options: Algorithm configuration including privacy constraints and
+            split strategy.
+    """
+
     def __init__(self, options: MondrianOptions):
         self.options = options
 
     def anonymize(
         self, dataset: DataFrame, column_information: list[ColumnInformation]
     ) -> tuple[DataFrame, AnonymizationReport]:
+        """Anonymize the dataset using Mondrian partitioning.
+
+        Args:
+            dataset: The input DataFrame to anonymize. Quasi-identifier columns
+                will be replaced by their partition representative value.
+            column_information: Per-column metadata. Length must equal the
+                number of columns in ``dataset``.
+
+        Returns:
+            A tuple of ``(anonymized_dataset, report)``.
+
+        Raises:
+            ValueError: If ``column_information`` length does not match the
+                number of dataset columns.
+        """
         if len(column_information) != len(dataset.columns):
             raise ValueError(
                 f"Dataset and column information are inconsisten in shape {len(dataset)} vs {len(column_information)}"

@@ -36,7 +36,12 @@ READI augments the functionalities provided by [IBM Data Privacy Toolkit](https:
 
 ### Installation
 
-**Recommended: Using uv (10-100x faster)**
+**Simplest: install from PyPI**
+```bash
+pip install readi-privacy
+```
+
+**Using uv (10-100x faster)**
 ```bash
 # Install uv if you haven't already
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -46,15 +51,10 @@ uv venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install READI
-uv pip install git+https://github.com/IBM/READI.git
+uv pip install readi-privacy
 ```
 
-**Standard Installation with pip:**
-```bash
-pip install git+https://github.com/IBM/READI.git
-```
-
-**Clone Repository:**
+**Install from source:**
 ```bash
 git clone https://github.com/IBM/READI.git
 cd READI
@@ -74,9 +74,8 @@ For contributors and developers:
 
 **Recommended: Using uv**
 ```bash
-# Install in editable mode with development dependencies
-uv pip install -e .
-uv pip install -r requirements-dev.txt
+# Install in editable mode with all development dependencies
+uv pip install -e ".[dev]"
 
 # Set up pre-commit hooks (recommended)
 pre-commit install
@@ -84,9 +83,8 @@ pre-commit install
 
 **Alternative: Using pip**
 ```bash
-# Install in editable mode with development dependencies
-pip install -e .
-pip install -r requirements-dev.txt
+# Install in editable mode with all development dependencies
+pip install -e ".[dev]"
 
 # Set up pre-commit hooks (recommended)
 pre-commit install
@@ -138,7 +136,7 @@ Explore our comprehensive Jupyter notebooks in the [`notebooks/`](./notebooks) d
 
 ## 📖 Documentation
 
-For detailed documentation, API references, and advanced usage patterns, please visit our [documentation portal](https://github.com/IBM/READI/docs) *(coming soon)*.
+For detailed documentation, API references, and advanced usage patterns, please refer to the [`notebooks/`](./notebooks) directory and the inline docstrings throughout the source code. A hosted documentation portal is planned for a future release.
 
 ---
 
@@ -167,7 +165,7 @@ If you use READI in academic work, please cite the most relevant publication fro
 @software{readi_ibm,
   title        = {READI: Risk Evaluation and De-Identification},
   author       = {Stefano Braghin and Liubov Nedoshivina and Anisa Halimi and Naoise Holohan and Kieran Fraser},
-  year         = {2026},
+  year         = {2025},
   url          = {https://github.com/IBM/READI}
 }
 ```
