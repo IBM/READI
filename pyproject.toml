@@ -29,7 +29,7 @@ dependencies = [
     "fastparquet==2024.5.0",
     "google-re2==1.1.20251105",
     "mecab-python3==1.0.12",
-    "nltk==3.9.4",
+    "nltk==3.10.0",
     "opt_einsum==3.3.0",
     "pandas==3.0.3",
     "pip>=26.0.0",
@@ -42,10 +42,12 @@ dependencies = [
     "SPARQLWrapper==2.0.0",
     "stanza==1.13.0",
     "tika==3.1.0",
-    "torch~=2.12.1",
     "unidic-lite==1.0.8",
     "urllib3==2.7.0",
     "word2number==1.1",
+
+    # To fix dependabot
+    "setuptools>=83.0.0",
 ]
 [project.optional-dependencies]
 rest = [
@@ -63,6 +65,7 @@ dev = [
   "pytest-asyncio",
   "pytest-faker",
   "pytest-mock",
+  "pytest-cov",
   "ruff",
   "ty",
   "ucimlrepo",
@@ -159,3 +162,6 @@ unresolved-import = "ignore"
 [tool.ty.src]
 include = ["src", "tests"]
 exclude = [".pre-commit-config.yaml"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=risk_assessment --cov-report html"
