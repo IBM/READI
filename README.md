@@ -131,6 +131,7 @@ Explore our comprehensive Jupyter notebooks in the [`notebooks/`](./notebooks) d
 | [**Unstructured Data Classification**](https://github.com/IBM/READI/blob/main/notebooks/example-unstructured-data-classification.ipynb) | General overview of READI API for free-text processing |
 | [**Structured Data Classification**](https://github.com/IBM/READI/blob/main/notebooks/example-structured-data-classification.ipynb) | Working with tabular and structured datasets |
 | [**Unstructured Data Masking**](https://github.com/IBM/READI/blob/main/notebooks/example-unstructured-masking.ipynb) | Applying masking actions (redaction, tagging, hash) after PII classification |
+| [**Structured Data Masking**](https://github.com/IBM/READI/blob/main/notebooks/example-structured-data-masking.ipynb) | Column classification followed by per-type masking of tabular data |
 
 ---
 
