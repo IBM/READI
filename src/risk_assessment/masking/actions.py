@@ -16,6 +16,8 @@ Available actions:
   preserving the original length.
 - :func:`format_preserving_redact` — replaces alphanumeric characters with
   ``"X"`` while keeping punctuation and spaces, preserving the original format.
+- :func:`random_from_series_factory` — replaces the entity with a random
+  value drawn from a provided ``pandas.Series``.
 - :func:`no_action` — returns the entity text unchanged (pass-through).
 """
 
@@ -23,6 +25,9 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from collections.abc import Callable
 from hashlib import sha256
+from random import choice
+
+from pandas import Series
 
 
 class MappingStorage(ABC):
@@ -146,6 +151,39 @@ def format_preserving_redact(_: str, enity_text: str) -> str:
         The format-preserving redacted string.
     """
     return "".join(["X" if c.isalnum() else c for c in enity_text])
+
+
+def random_from_series_factory(values: Series) -> Callable[[str, str], str]:
+    """Create a masking action that replaces an entity with a random value from *values*.
+
+    A replacement is drawn uniformly at random from the provided
+    ``pandas.Series`` each time the action is called, so different occurrences
+    of the same entity text may receive different replacements.
+
+    Args:
+        values: Series of candidate replacement values.  Must be non-empty.
+
+    Returns:
+        A ``(entity_type, entity_text) -> replacement`` callable.
+
+    Raises:
+        IndexError: If *values* is empty.
+
+    Example::
+
+        import pandas as pd
+        from risk_assessment.masking.actions import random_from_series_factory
+
+        fake_names = pd.Series(["Alice", "Bob", "Carol", "Dave"])
+        action = random_from_series_factory(fake_names)
+        print(action("Person", "John Doe"))  # e.g. "Carol"
+    """
+    pool = list(values)
+
+    def _replace(_entity_type: str, _entity_text: str) -> str:
+        return str(choice(pool))
+
+    return _replace
 
 
 def no_action(value: str, _: str) -> str:
