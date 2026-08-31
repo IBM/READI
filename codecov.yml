@@ -1,0 +1,23 @@
+coverage:
+  status:
+    project:
+      # Overall coverage must not drop below the current baseline.
+      # `target: auto` means "don't regress from the last commit on the base branch".
+      # The 1% threshold gives a small float to absorb measurement noise.
+      default:
+        target: auto
+        threshold: 1%
+        informational: false   # fails the PR check if breached
+
+    patch:
+      # Lines added or changed by the PR must be covered at ≥ 80%.
+      default:
+        target: 80%
+        threshold: 0%
+        informational: false   # fails the PR check if breached
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default            # updates the existing comment on re-push
+  require_changes: true        # only post when coverage actually changes
+  hide_project_coverage: false

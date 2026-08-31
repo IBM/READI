@@ -165,4 +165,18 @@ include = ["src", "tests"]
 exclude = [".pre-commit-config.yaml"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=risk_assessment --cov-report html"
+addopts = "--cov=src/risk_assessment --cov-report=html --cov-report=xml --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src/risk_assessment"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+# Regress guard: overall coverage must not drop below this.
+# Update this value when coverage genuinely improves.
+fail_under = 33
+show_missing = true
+skip_covered = false
