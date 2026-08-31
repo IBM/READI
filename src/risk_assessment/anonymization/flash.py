@@ -197,7 +197,7 @@ class FlashLattice:
 
         # Sort each level according to the Flash traversal order (ascending c)
         for lv in self._lattice:
-            self._lattice[lv].sort(key=lambda n: self._priority(n))
+            self._lattice[lv].sort(key=self._priority)
 
         self._global_optimum: LatticeNode | None = None
 
@@ -346,7 +346,7 @@ class FlashLattice:
                 existing = self._node_map.get(hash(candidate))
                 if existing is not None:
                     result.append(existing)
-        result.sort(key=lambda n: self._priority(n))
+        result.sort(key=self._priority)
         return result
 
     def _successors_down(self, node: LatticeNode) -> list[LatticeNode]:
@@ -360,7 +360,7 @@ class FlashLattice:
                 existing = self._node_map.get(hash(candidate))
                 if existing is not None:
                     result.append(existing)
-        result.sort(key=lambda n: self._priority(n))
+        result.sort(key=self._priority)
         return result
 
     def _priority(self, node: LatticeNode) -> tuple[int, float, float]:

@@ -1,11 +1,10 @@
 from unittest.mock import patch
 
 import risk_assessment.classification.identifiers as identifiers_module
-from risk_assessment.classification.identifiers import LanguageBasedDictionaryIdentifier
 
 
 def test_expansion():
-    identifier = LanguageBasedDictionaryIdentifier("FOOBAR", {"en": ["Gear"]}, False)
+    identifier = identifiers_module.LanguageBasedDictionaryIdentifier("FOOBAR", {"en": ["Gear"]}, False)
 
     def fake_enrich(ident, language):
         ident.add_language(language, ["Engrenage"])
