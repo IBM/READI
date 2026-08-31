@@ -13,6 +13,7 @@ jobs:
   test:
     name: Reuse testing workflow
     uses: ./.github/workflows/testing.yml
+    secrets: inherit
 
   lint:
     name: Reuse lint workflow
