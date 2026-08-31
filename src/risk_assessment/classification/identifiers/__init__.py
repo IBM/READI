@@ -470,6 +470,8 @@ WHERE {
             for new_term in language_terms:
                 if not identifier.case_sensitive:
                     new_terms.add(new_term.casefold())
+                else:
+                    new_terms.add(new_term)
         except Exception as e:
             logger.info(f"error querying sparql for {term}")
             logger.debug(str(e))
