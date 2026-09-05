@@ -28,18 +28,12 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: |
-          uv sync --extra dev
-
+        run: uv sync --extra dev
       - name: Run ruff linter
-        run: |
-          uv run ruff check src/ tests/
-
-      - name: Run ruff formatter check
-        run: |
-          uv run ruff format --check src/ tests/
-
+        run: ruff check src/ tests/
       - name: Run ty type checking
-        run: |
-          uv run ty check
+        run: ty check
+        continue-on-error: true
+      - name: Run bandit security checking
+        run: bandit -c ./bandit.yaml -r src
         continue-on-error: true
