@@ -30,7 +30,7 @@ dependencies = [
     "fastparquet==2024.5.0",
     "google-re2==1.1.20251105",
     "mecab-python3==1.0.12",
-    "nltk==3.10.0",
+    "nltk==3.10.3",
     "opt_einsum==3.3.0",
     "pandas==3.0.3",
     "pip>=26.0.0",
