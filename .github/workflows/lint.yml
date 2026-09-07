@@ -29,11 +29,11 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --extra dev
-      - name: Run ruff linter
-        run: ruff check src/ tests/
       - name: Run ty type checking
         run: ty check
-        continue-on-error: true
+      - name: Run ruff
+        run: |
+          uv ruff check src/ tests/
+          uv ruff format --check src/ tests/
       - name: Run bandit security checking
-        run: bandit -c ./bandit.yaml -r src
-        continue-on-error: true
+        run: uv bandit -c ./bandit.yaml -r src
