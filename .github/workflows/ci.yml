@@ -1,4 +1,4 @@
-name: Testing
+name: CI
 
 on:
   push:
@@ -9,6 +9,59 @@ on:
   workflow_call:
 
 jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run ty type checking
+        run: ty check
+
+      - name: Run ruff
+        run: |
+          uv ruff check src/ tests/
+          uv ruff format --check src/ tests/
+
+  security:
+    name: Security Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run bandit security checks
+        run: uv run bandit -c bandit.yaml -r src/
+
   test:
     name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -35,8 +88,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: |
-          uv sync --all-extras
+        run: uv sync --all-extras
 
       - name: Download spaCy models
         run: |
@@ -52,8 +104,7 @@ jobs:
           uv run python -m nltk.downloader words
 
       - name: Run tests
-        run: |
-          uv run pytest tests/ -v --tb=short --maxfail=5
+        run: uv run pytest tests/ -v --tb=short --maxfail=5
 
       - name: Upload test results
         if: always()
@@ -64,32 +115,6 @@ jobs:
             .pytest_cache/
             test-results/
           retention-days: 7
-
-  security:
-    name: Security Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: |
-          uv sync --extra dev
-
-      - name: Run bandit security checks
-        run: |
-          uv run bandit -c bandit.yaml -r src/
 
   coverage:
     name: Test Coverage
@@ -112,8 +137,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: |
-          uv sync --all-extras
+        run: uv sync --all-extras
 
       - name: Download spaCy models
         run: |
