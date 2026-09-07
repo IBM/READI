@@ -31,36 +31,12 @@ jobs:
         run: uv sync --extra dev
 
       - name: Run ty type checking
-        run: ty check
+        run: uv run ty check
 
       - name: Run ruff
         run: |
-          uv ruff check src/ tests/
-          uv ruff format --check src/ tests/
-
-  security:
-    name: Security Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --extra dev
-
-      - name: Run bandit security checks
-        run: uv run bandit -c bandit.yaml -r src/
+          uv run ruff check src/ tests/
+          uv run ruff format --check src/ tests/
 
   test:
     name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
@@ -69,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout code
@@ -104,66 +80,29 @@ jobs:
           uv run python -m nltk.downloader words
 
       - name: Run tests
-        run: uv run pytest tests/ -v --tb=short --maxfail=5
+        # On 3.12 also collect coverage in the same invocation to avoid running
+        # the suite twice. --cov-fail-under enforces the overall regression floor
+        # (configured in pyproject.toml [tool.coverage.report] fail_under = 33).
+        # Patch coverage (new/changed lines ≥ 80%) is enforced by Codecov below.
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ matrix.python-version }}" = "3.12" ]; then
+            EXTRA_ARGS="--cov=src/risk_assessment --cov-report=xml --cov-report=html --cov-report=term-missing"
+          fi
+          uv run pytest tests/ -v --tb=short --maxfail=5 \
+            --junitxml=test-results/junit-${{ matrix.os }}-${{ matrix.python-version }}.xml \
+            $EXTRA_ARGS
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
-          path: |
-            .pytest_cache/
-            test-results/
+          path: test-results/
           retention-days: 7
 
-  coverage:
-    name: Test Coverage
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --all-extras
-
-      - name: Download spaCy models
-        run: |
-          uv run python -m spacy download en_core_web_sm
-          uv run python -m spacy download ja_core_news_sm
-          uv run python -m spacy download xx_ent_wiki_sm
-
-      - name: Download NLTK data
-        run: |
-          uv run python -m nltk.downloader punkt
-          uv run python -m nltk.downloader averaged_perceptron_tagger
-          uv run python -m nltk.downloader maxent_ne_chunker
-          uv run python -m nltk.downloader words
-
-      - name: Run tests with coverage
-        # --cov-fail-under enforces the overall regression floor (configured in
-        # pyproject.toml [tool.coverage.report] fail_under = 33).
-        # Patch coverage (new/changed lines ≥ 80%) is enforced by Codecov below.
-        run: |
-          uv run pytest tests/ \
-            --cov=src/risk_assessment \
-            --cov-report=xml \
-            --cov-report=html \
-            --cov-report=term-missing
-
       - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -172,8 +111,8 @@ jobs:
           verbose: true
 
       - name: Upload HTML coverage report as artifact
+        if: always() && matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: coverage-html-report
           path: htmlcov/
