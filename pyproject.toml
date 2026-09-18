@@ -37,12 +37,13 @@ dependencies = [
     "pyarrow==24.0.0",
     "python-dotenv==1.2.2",
     "pytz==2024.1",
-    "safetensors==0.4.4",
+    # "safetensors==0.4.4",
     "scipy>=1.17.1",
-    "spacy==3.8.16",
+    "spacy==3.8.14",
     "SPARQLWrapper==2.0.0",
     "stanza==1.13.0",
     "tika==3.1.0",
+    "transformers==5.17.0",
     "unidic-lite==1.0.8",
     "urllib3==2.7.0",
     "word2number==1.1",
@@ -54,9 +55,9 @@ dependencies = [
 rest = [
   "fastapi==0.138.2",
 ]
-flair = [
-  "flair>=0.15.1",
-]
+# flair = [
+#   "flair>=0.15.1",
+# ]
 dev = [
   "bandit",
   "faker",
