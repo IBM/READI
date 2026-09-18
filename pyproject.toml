@@ -26,7 +26,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "datasets==5.0.0",
+    "datasets==5.0.1",
     "fastparquet==2024.5.0",
     "google-re2==1.1.20251105",
     "mecab-python3==1.0.12",
