@@ -17,10 +17,11 @@ Classes:
 
 import warnings
 from abc import ABC, abstractmethod
+from typing import cast
 
 import MeCab
 from nltk.tokenize import WordPunctTokenizer
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
 
 from risk_assessment.readi.sentence_tokenizer import SentenceTokenizer
 
@@ -151,7 +152,10 @@ class LMTokenizer(BaseTokenizer):
             device: Device string for downstream model inference. Defaults to ``"cpu"``.
         """
         self.device = device
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)  # nosec
+        self.tokenizer: PreTrainedTokenizer | PreTrainedTokenizerFast = cast(
+            PreTrainedTokenizer | PreTrainedTokenizerFast,
+            AutoTokenizer.from_pretrained(model_name),  # nosec
+        )
 
     def span_tokenize(self, text: str) -> list[tuple[int, int]]:
         tokenized_text = self.tokenizer(text)
