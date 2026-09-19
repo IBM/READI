@@ -3,7 +3,7 @@ name = "readi-privacy"
 dynamic = ["version"]
 description = "A collection of functionality to perform data classification, data privacy risk assessment, and enforce mitigation"
 readme = "README.md"
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.14,<3.15"
 authors = [
   {name = "Stefano Braghin", email = "stefanob@ie.ibm.com"},
   {name = "Liubov Nedoshivina", email = "liubov.nedoshivina@ibm.com"},
