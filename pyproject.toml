@@ -35,7 +35,7 @@ dependencies = [
     "pandas==3.0.6",
     "pip>=26.0.0",
     "pyarrow==24.0.0",
-    "python-dotenv==1.2.2",
+    "python-dotenv==1.2.3",
     "pytz==2024.1",
     # "safetensors==0.4.4",
     "scipy>=1.17.1",
