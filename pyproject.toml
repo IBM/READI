@@ -36,7 +36,7 @@ dependencies = [
     "pip>=26.0.0",
     "pyarrow==24.0.0",
     "python-dotenv==1.2.2",
-    "pytz==2024.1",
+    "pytz==2024.2",
     # "safetensors==0.4.4",
     "scipy>=1.17.1",
     "spacy==3.8.14",
