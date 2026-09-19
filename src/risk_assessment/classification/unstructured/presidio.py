@@ -20,16 +20,20 @@ try:
             default_score_threshold: float = 0,
             supported_languages: list[str] | None = None,
         ):
+            super().__init__(type_mapping)
             if supported_languages is None:
                 supported_languages = ["en"]
             self.type_mapping = type_mapping
 
-            self.analyzer = AnalyzerEngine(
-                registry=registry,
-                nlp_engine=nlp_engine,
-                default_score_threshold=default_score_threshold,
-                supported_languages=supported_languages,
-            )
+            kwargs: dict = {
+                "default_score_threshold": default_score_threshold,
+                "supported_languages": supported_languages,
+            }
+            if registry is not None:
+                kwargs["registry"] = registry
+            if nlp_engine is not None:
+                kwargs["nlp_engine"] = nlp_engine
+            self.analyzer = AnalyzerEngine(**kwargs)
 
         def extract(self, text: str) -> list[Entity]:
             return [
