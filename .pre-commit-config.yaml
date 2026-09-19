@@ -24,7 +24,7 @@ repos:
         args: [ --pytest-test-first ]
     # -   id: check-added-large-files
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.3
+    rev: v0.16.8
     hooks:
       - id: ruff
       # Run the formatter
@@ -32,12 +32,12 @@ repos:
         exclude: docs/|sphinx/
 -   repo: https://github.com/allganize/ty-pre-commit
     # Ty version.
-    rev: "v0.0.72"
+    rev: "v0.0.82"
     hooks:
       # Run the type checker.
       - id: ty-check
 -   repo: https://github.com/abravalheri/validate-pyproject
-    rev: 'v0.25'
+    rev: '0.26'
     hooks:
       - id: validate-pyproject
         # Optional extra validations from SchemaStore:
