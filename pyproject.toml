@@ -57,6 +57,9 @@ rest = [
 # flair = [
 #   "flair>=0.15.1",
 # ]
+presidio = [
+  "presidio-analyzer==2.2.364",
+]
 dev = [
   "bandit",
   "faker",
