@@ -177,6 +177,6 @@ omit = [
 [tool.coverage.report]
 # Regress guard: overall coverage must not drop below this.
 # Update this value when coverage genuinely improves.
-fail_under = 33
+fail_under = 80
 show_missing = true
 skip_covered = false
