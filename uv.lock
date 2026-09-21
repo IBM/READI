@@ -3,10 +3,10 @@ revision = 3
 requires-python = ">=3.11, <3.14"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version >= '3.12' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version >= '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -2843,7 +2843,7 @@ requires-dist = [
     { name = "spacy", specifier = "==3.8.14" },
     { name = "sparqlwrapper", specifier = "==2.0.0" },
     { name = "stanza", specifier = "==1.13.0" },
-    { name = "tika", specifier = "==3.1.0" },
+    { name = "tika", specifier = "==3.3.2" },
     { name = "transformers", specifier = "==5.17.0" },
     { name = "ty", marker = "extra == 'dev'" },
     { name = "ucimlrepo", marker = "extra == 'dev'" },
@@ -3515,15 +3515,15 @@ wheels = [
 
 [[package]]
 name = "tika"
-version = "3.1.0"
+version = "3.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "beautifulsoup4" },
     { name = "requests" },
-    { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c2/e2/28022574d12239d6c158f903c7697ebb55591a05bfd3177146b2c7cd72d2/tika-3.1.0.tar.gz", hash = "sha256:4c3a404c3d846437c942d6a6fd7b71d50285690fae5489aa8a6f00ff9ccd0fc7", size = 32697, upload-time = "2025-03-26T16:12:27.693Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/22/26/102862348a6270b016ccecfae332bc6c18b7f020e5d158d07e15e8c11d52/tika-3.3.2.tar.gz", hash = "sha256:468a5302249162351f65cfe05632d3869c0350d726aef82a75e7b04fa5cac8ab", size = 31542, upload-time = "2026-08-01T19:11:36.101Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/c6/9b549ca412bb03ad64632f5e47a53dc1b56a267809d7d3f9ef6d5b3c0559/tika-3.1.0-py3-none-any.whl", hash = "sha256:c6171c947d6410813f236c988a1fde4a6ad11cbaa95ec4e700eb9aef7c848093", size = 38053, upload-time = "2025-03-26T16:12:26.301Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/bc/e82ec1adc1283cfc4e192376592c6f1c7982a205647ada75fd66932f9007/tika-3.3.2-py3-none-any.whl", hash = "sha256:fca2a8edb35cfdca0ef3e52420ca42d87754e6f388b24b729dbea48bf32f80a4", size = 28592, upload-time = "2026-08-01T19:11:35.012Z" },
 ]
 
 [[package]]
