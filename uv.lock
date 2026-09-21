@@ -3,10 +3,10 @@ revision = 3
 requires-python = ">=3.11, <3.14"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version >= '3.12' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version >= '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -2842,7 +2842,7 @@ requires-dist = [
     { name = "setuptools", specifier = ">=83.0.0" },
     { name = "spacy", specifier = "==3.8.14" },
     { name = "sparqlwrapper", specifier = "==2.0.0" },
-    { name = "stanza", specifier = "==1.13.0" },
+    { name = "stanza", specifier = "==1.14.0" },
     { name = "tika", specifier = "==3.1.0" },
     { name = "transformers", specifier = "==5.17.0" },
     { name = "ty", marker = "extra == 'dev'" },
@@ -3391,7 +3391,7 @@ wheels = [
 
 [[package]]
 name = "stanza"
-version = "1.13.0"
+version = "1.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "emoji" },
@@ -3405,9 +3405,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "udtools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/60/69/68561cc2877afa9105093fba3ebd472f64d4b52d02964c4b16a70d8bbe5b/stanza-1.13.0.tar.gz", hash = "sha256:0f5e80481b7200871149f919529e6d5cdf1e7362de268c63d9e8bc735a4b336c", size = 1643678, upload-time = "2026-06-18T19:14:16.817Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/84/7e079cb5b4d54c57bf21f54a8591c8ec2cd2d1f32fc3e69eeeffecae419c/stanza-1.14.0.tar.gz", hash = "sha256:edd1eb171d34bea920c4d06d3f007a2232a63991f20f398370204ca3ddc8287f", size = 1707642, upload-time = "2026-07-15T01:58:27.644Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/14/7a4487f20096583e8ec0cfa966e016acc62bf8ef16f866c5351e920d58b4/stanza-1.13.0-py3-none-any.whl", hash = "sha256:7a4c06659e1fd96a67ea4681fda2288c1a36b6be2636d6f11585da71b8c3f6eb", size = 1883208, upload-time = "2026-06-18T19:14:12.949Z" },
+    { url = "https://files.pythonhosted.org/packages/62/d4/82b548b1953a296a86a2dcb991357c582f1847e0dde8556bd53c40ec2f89/stanza-1.14.0-py3-none-any.whl", hash = "sha256:b5e81d742e39671de146e69f3c6ca7ff76cc4201ed07cab3083d815b2cbab544", size = 1956577, upload-time = "2026-07-15T01:58:23.705Z" },
 ]
 
 [[package]]
