@@ -44,7 +44,7 @@ dependencies = [
     "tika==3.1.0",
     "transformers==5.17.0",
     "unidic-lite==1.0.8",
-    "urllib3==2.7.0",
+    "urllib3==2.8.0",
     "word2number==1.1",
 
     # To fix dependabot
