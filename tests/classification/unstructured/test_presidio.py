@@ -76,7 +76,10 @@ def _make_extractor(**kwargs) -> PresidioEntityExtractor:
     return PresidioEntityExtractor(type_mapping=TYPE_MAPPING, **kwargs)
 
 
-def _stub_result(entity_type: str, start: int, end: int, score: float = 0.85) -> _RecognizerResult:
+RecognizerResult = _RecognizerResult
+
+
+def _stub_result(entity_type: str, start: int, end: int, score: float = 0.85) -> RecognizerResult:
     return _RecognizerResult(entity_type=entity_type, start=start, end=end, score=score)
 
 
