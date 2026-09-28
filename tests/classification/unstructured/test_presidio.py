@@ -258,7 +258,7 @@ def test_empty_type_mapping_returns_raw_types():
 def test_build_entity_returns_entity_dataclass():
     extractor = _make_extractor()
     result = _stub_result("PERSON", 3, 11, score=0.88)
-    entity = extractor._build_entity(result)
+    entity = extractor._build_entity(result)  # ty: ignore[invalid-argument-type]
     assert isinstance(entity, Entity)
     assert entity.start == 3
     assert entity.end == 11
@@ -270,7 +270,7 @@ def test_build_entity_returns_entity_dataclass():
 def test_build_entity_score_zero():
     extractor = _make_extractor()
     result = _stub_result("PERSON", 0, 4, score=0.0)
-    entity = extractor._build_entity(result)
+    entity = extractor._build_entity(result)  # ty: ignore[invalid-argument-type]
     assert entity.confidence == pytest.approx(0.0)
 
 
