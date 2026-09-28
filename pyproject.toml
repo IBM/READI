@@ -48,7 +48,7 @@ dependencies = [
     "word2number==1.1",
 
     # To fix dependabot
-    "setuptools>=83.0.0",
+    # "setuptools>=83.0.0",
 ]
 [project.optional-dependencies]
 rest = [
