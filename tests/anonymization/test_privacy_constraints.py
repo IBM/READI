@@ -6,7 +6,6 @@ from pandas import DataFrame
 from risk_assessment.anonymization import DistinctLDiversity, EntropyLDiversity, KAnonymity, TCloseness
 from risk_assessment.metrics.informationloss import ColumnClass, ColumnInformation, ColumnType
 from risk_assessment.utility import extract_histograms
-from risk_assessment.utility.hierarchy import MaterializedHierarchy
 
 
 def test_kanonymity():

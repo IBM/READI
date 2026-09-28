@@ -8,8 +8,8 @@ from risk_assessment.classification.unstructured.pos_utility import (
 
 
 class NLTKPoSTagger(EntityExtractor):
-    def __init__(self, tokenizer: TokenizerI, tagger: TaggerI, type_mapping: dict[str, str] = {}) -> None:
-        super().__init__(type_mapping)
+    def __init__(self, tokenizer: TokenizerI, tagger: TaggerI, type_mapping: dict[str, str] | None = None) -> None:
+        super().__init__(type_mapping if type_mapping is not None else {})
         self.tokenizer = tokenizer
         self.tagger = tagger
 
