@@ -1,8 +1,6 @@
-import importlib.resources
 import math
 
 import pandas as pd
-import pytest
 
 from risk_assessment.anonymization import KAnonymity, PrivacyConstraint
 from risk_assessment.anonymization.optimal_lattice_anonymization import AnonymityChecker, LatticeNode

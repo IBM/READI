@@ -148,7 +148,7 @@ class AnonymityChecker:
         return True
 
 
-@dataclass(eq=True)
+@dataclass
 class LatticeNode:
     """A single node in the generalization lattice.
 
@@ -188,6 +188,12 @@ class LatticeNode:
 
     def __hash__(self) -> int:
         return hash(str(self.values))
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, LatticeNode):
+            return self.__hash__() == other.__hash__()
+
+        return False
 
 
 def _calculate_product(levels: list[list[int]]) -> list[list[int]]:
