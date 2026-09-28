@@ -28,7 +28,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --all-extras
 
       - name: Run ty type checking
         run: uv run ty check
