@@ -29,6 +29,7 @@ Example::
 
 from __future__ import annotations
 
+from contextlib import suppress
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Any
@@ -112,12 +113,10 @@ def _find_common_ancestor(values: npt.NDArray[Any], hierarchy: GeneralizationHie
                 node = node.parent
         else:
             while node is not None:
-                try:
+                with suppress(ValueError):
                     index = ancestors.index(node)
                     ancestors = ancestors[index:]
                     break
-                except ValueError:
-                    pass
                 node = node.parent
 
     if ancestors is None:
