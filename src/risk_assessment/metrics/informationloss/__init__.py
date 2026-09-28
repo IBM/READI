@@ -199,8 +199,8 @@ def _get_loss_categorical(value: Any, column_information: ColumnInformation) -> 
 def _report_for_column_without_transformation_level(
     original: Series | DataFrame, anonymized: Series | DataFrame, column_information: ColumnInformation
 ) -> float:
-    # if column_information.column_class != ColumnClass.CATEGORICAL:
-    #     raise ValueError("Cannot process non categorical colums")
+    if column_information.column_class != ColumnClass.CATEGORICAL:
+        raise ValueError("Cannot process non categorical colums")
 
     weight = column_information.weight
     precision = 0.0
@@ -241,7 +241,7 @@ def _categorical_precision_report_per_quasi_column(
         if c_i.column_type == ColumnType.QUASI:
             report: float = _report_for_column(
                 original.iloc[:, index], anonymized.iloc[:, index], column_information[index], transformation_levels
-            )  # for index, c_i in enumerate(column_information) if c_i.column_type == ColumnType.QUASI
+            )
             results.append(report)
 
     return results
