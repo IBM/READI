@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -86,7 +86,7 @@ jobs:
         # Patch coverage (new/changed lines ≥ 80%) is enforced by Codecov below.
         run: |
           EXTRA_ARGS=""
-          if [ "${{ matrix.python-version }}" = "3.12" ]; then
+          if [ "${{ matrix.python-version }}" = "3.11" ]; then
             EXTRA_ARGS="--cov=src/risk_assessment --cov-report=xml --cov-report=html --cov-report=term-missing"
           fi
           uv run pytest tests/ -v --tb=short --maxfail=5 \
@@ -102,7 +102,7 @@ jobs:
           retention-days: 7
 
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.11'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
           verbose: true
 
       - name: Upload HTML coverage report as artifact
-        if: always() && matrix.python-version == '3.12'
+        if: always() && matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html-report
