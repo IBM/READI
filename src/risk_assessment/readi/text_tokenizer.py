@@ -158,6 +158,7 @@ class LMTokenizer(BaseTokenizer):
         )
 
     def span_tokenize(self, text: str) -> list[tuple[int, int]]:
+        assert self.tokenizer is not None
         tokenized_text = self.tokenizer(text)
         num_of_tokens = len(tokenized_text["input_ids"])
         token_spans: list[tuple[int, int]] = []
