@@ -31,7 +31,7 @@ dependencies = [
     "google-re2==1.1.20251105",
     "mecab-python3==1.0.12",
     "nltk==3.10.3",
-    "opt_einsum==3.3.0",
+    "opt_einsum==3.4.0",
     "pandas==3.0.6",
     "pip>=26.0.0",
     "pyarrow==24.0.0",
