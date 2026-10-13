@@ -34,7 +34,7 @@ dependencies = [
     "opt_einsum==3.3.0",
     "pandas==3.0.6",
     "pip>=26.0.0",
-    "pyarrow==24.0.0",
+    "pyarrow==26.0.0",
     "python-dotenv==1.2.4",
     "pytz==2024.1",
     "scipy>=1.17.1",
