@@ -40,7 +40,6 @@ dependencies = [
     "scipy>=1.17.1",
     "spacy==3.8.16",
     "SPARQLWrapper==2.0.0",
-    "stanza==1.15.0",
     "tika==3.3.2",
     "transformers==5.19.0",
     "unidic-lite==1.0.8",
@@ -51,6 +50,9 @@ dependencies = [
     # "setuptools>=83.0.0",
 ]
 [project.optional-dependencies]
+stanza = [
+  "stanza==1.15.0",
+]
 rest = [
   "fastapi==0.138.2",
 ]

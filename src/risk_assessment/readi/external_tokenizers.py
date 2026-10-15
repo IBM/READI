@@ -1,12 +1,21 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-import stanza
 from spacy.lang.en import English
 from spacy.language import Language
-from stanza.models.common.doc import Document
 
 from risk_assessment.readi.sentence_tokenizer import SentenceTokenizer
 from risk_assessment.readi.text_tokenizer import BaseTokenizer
+
+try:
+    import stanza
+    from stanza.models.common.doc import Document
+
+    _stanza_available = True
+except ImportError:
+    _stanza_available = False
+
+if TYPE_CHECKING:
+    from stanza.models.common.doc import Document
 
 
 class SpacyTokenizer(BaseTokenizer):
@@ -22,11 +31,15 @@ class SpacyTokenizer(BaseTokenizer):
 
 class STANZASentenceTokenizer(SentenceTokenizer):
     def __init__(self, language: str = "en") -> None:
+        if not _stanza_available:
+            raise ImportError(
+                'stanza is required for STANZASentenceTokenizer. Install it with: pip install "readi-privacy[stanza]"'
+            )
         super().__init__()
         self.tokenizer = stanza.Pipeline(lang=language, processors="tokenize", verbose=False, logging_level="ERROR")
 
     def span_tokenize(self, text: str) -> list[tuple[int, int]]:
-        tokenized_sentences = cast(Document, self.tokenizer(text))
+        tokenized_sentences = cast("Document", self.tokenizer(text))
         sentence_positions: list[tuple[int, int]] = []
         for item in tokenized_sentences.sentences:
             start = item.tokens[0].start_char
@@ -35,5 +48,5 @@ class STANZASentenceTokenizer(SentenceTokenizer):
         return sentence_positions
 
     def sent_tokenize(self, text: str) -> list[str]:
-        tokenized_sentences = cast(Document, self.tokenizer(text))
+        tokenized_sentences = cast("Document", self.tokenizer(text))
         return [item.text for item in tokenized_sentences.sentences]

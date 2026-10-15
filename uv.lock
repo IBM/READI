@@ -7,6 +7,8 @@ resolution-markers = [
     "python_full_version >= '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -2843,7 +2845,6 @@ dependencies = [
     { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "spacy" },
     { name = "sparqlwrapper" },
-    { name = "stanza" },
     { name = "tika" },
     { name = "transformers" },
     { name = "unidic-lite" },
@@ -2871,6 +2872,9 @@ presidio = [
 ]
 rest = [
     { name = "fastapi" },
+]
+stanza = [
+    { name = "stanza" },
 ]
 
 [package.metadata]
@@ -2901,7 +2905,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.17.1" },
     { name = "spacy", specifier = "==3.8.16" },
     { name = "sparqlwrapper", specifier = "==2.0.0" },
-    { name = "stanza", specifier = "==1.15.0" },
+    { name = "stanza", marker = "extra == 'stanza'", specifier = "==1.15.0" },
     { name = "tika", specifier = "==3.3.2" },
     { name = "transformers", specifier = "==5.19.0" },
     { name = "ty", marker = "extra == 'dev'" },
@@ -2910,7 +2914,7 @@ requires-dist = [
     { name = "urllib3", specifier = "==2.8.0" },
     { name = "word2number", specifier = "==1.1" },
 ]
-provides-extras = ["dev", "presidio", "rest"]
+provides-extras = ["dev", "presidio", "rest", "stanza"]
 
 [[package]]
 name = "referencing"

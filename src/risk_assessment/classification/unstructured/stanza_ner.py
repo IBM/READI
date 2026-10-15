@@ -1,11 +1,20 @@
-import stanza
-import torch
+try:
+    import stanza
+    import torch
+
+    _stanza_available = True
+except ImportError:
+    _stanza_available = False
 
 from risk_assessment.classification.unstructured import Entity, EntityExtractor
 
 
 class STANZAEntityExtractor(EntityExtractor):
     def __init__(self, type_mapping: dict[str, str] | None = None, language: str = "en"):
+        if not _stanza_available:
+            raise ImportError(
+                'stanza is required for STANZAEntityExtractor. Install it with: pip install "readi-privacy[stanza]"'
+            )
         if type_mapping is None:
             type_mapping = {}
         super().__init__(type_mapping)
