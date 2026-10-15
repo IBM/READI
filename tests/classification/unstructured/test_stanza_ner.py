@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("stanza", reason="stanza extra not installed")
+
 from risk_assessment.classification.unstructured.stanza_ner import STANZAEntityExtractor
 
 

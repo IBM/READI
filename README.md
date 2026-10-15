@@ -96,6 +96,21 @@ This installs the project in [editable mode](https://setuptools.pypa.io/en/lates
 
 ---
 
+## 🔌 Optional Extras
+
+READI ships several optional dependency groups that can be installed on top of the base package:
+
+| Extra | What it adds | Install command |
+|-------|-------------|-----------------|
+| `stanza` | [Stanza](https://stanfordnlp.github.io/stanza/) NLP pipeline — enables `STANZAEntityExtractor` and `STANZASentenceTokenizer`. The Python package is Apache 2.0; however, Stanza can optionally connect to the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) Java server, which is GPL-licensed. READI does not use that server bridge, but be aware of the GPL implications if you enable it separately. | `pip install "readi-privacy[stanza]"` |
+| `rest` | FastAPI server for the built-in REST API | `pip install "readi-privacy[rest]"` |
+| `presidio` | Microsoft Presidio analyzer integration | `pip install "readi-privacy[presidio]"` |
+| `dev` | Development tools (pytest, ruff, bandit, …) | `pip install "readi-privacy[dev]"` |
+
+Multiple extras can be combined: `pip install "readi-privacy[stanza,rest]"`.
+
+---
+
 ## 🌐 REST API Usage
 
 READI provides a simple REST API for remote processing.
