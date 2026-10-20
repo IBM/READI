@@ -41,7 +41,7 @@ dependencies = [
     "spacy==3.8.16",
     "SPARQLWrapper==2.0.0",
     "tika==3.3.2",
-    "transformers==5.19.0",
+    "transformers==5.20.2",
     "unidic-lite==1.0.8",
     "urllib3==2.8.0",
     "word2number==1.1",
