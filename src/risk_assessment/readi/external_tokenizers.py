@@ -8,7 +8,6 @@ from risk_assessment.readi.text_tokenizer import BaseTokenizer
 
 try:
     import stanza
-    from stanza.models.common.doc import Document
 
     _stanza_available = True
 except ImportError:
