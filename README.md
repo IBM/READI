@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.11%20|%203.12%20|%203.13-blue.svg)](https://www.python.org/downloads/)
-[![CI](https://github.com/IBM/READI/actions/workflows/testing.yml/badge.svg)](https://github.com/IBM/READI/actions/workflows/ci.yml)
+[![CI](https://github.com/IBM/READI/actions/workflows/ci.yml/badge.svg)](https://github.com/IBM/READI/actions/workflows/ci.yml)
 [![Publish to PyPI](https://github.com/IBM/READI/actions/workflows/publish.yml/badge.svg)](https://github.com/IBM/READI/actions/workflows/publish.yml)
 [![PyPI](https://img.shields.io/pypi/v/READI.svg)](https://pypi.org/project/readi-privacy/)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
