@@ -60,7 +60,7 @@ rest = [
 #   "flair>=0.15.1",
 # ]
 presidio = [
-  "presidio-analyzer==2.2.364",
+  "presidio-analyzer==2.2.366",
 ]
 dev = [
   "bandit",
