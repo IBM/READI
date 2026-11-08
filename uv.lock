@@ -2083,21 +2083,22 @@ wheels = [
 
 [[package]]
 name = "presidio-analyzer"
-version = "2.2.364"
+version = "2.2.366"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "numpy" },
     { name = "phonenumbers" },
+    { name = "preshed" },
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "regex" },
     { name = "spacy" },
     { name = "tldextract" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c7/50/408a41cf99d076107d3823d514bb6408e249132418f068673cb807839ce5/presidio_analyzer-2.2.364.tar.gz", hash = "sha256:51f27bacf199fb9777ade9552c0f0111e00a1d73cfe2d4797fc05c998de1e0b6", size = 154117, upload-time = "2026-07-22T07:54:36.264Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/40/82/5e7511329ed66898b45a83fcff0e4bb7baecde1df42f16c8c144014e5e87/presidio_analyzer-2.2.366.tar.gz", hash = "sha256:0a83b224765cc3e796cd51aff60c62c75d8be60e8ed21aa08099da78ffbd62bf", size = 170833, upload-time = "2026-10-27T09:06:34.524Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/15/44a64276cd5c45485716314addfb7966c24f61034d8ff8e9a78d13d0afbe/presidio_analyzer-2.2.364-py3-none-any.whl", hash = "sha256:0a9eeb60ccc416c505367b4989d056becb84ef082703ee3361c046fb75941739", size = 266299, upload-time = "2026-07-22T07:54:34.868Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/15/1963007bc880b48c733b4bb3802e7001a3f831d117b5f6f82ca46f2e9b10/presidio_analyzer-2.2.366-py3-none-any.whl", hash = "sha256:ae5f29b92d3751521ecc6e5d59b93167381488692c371f9816af72681d3592a9", size = 295229, upload-time = "2026-10-27T09:06:32.888Z" },
 ]
 
 [[package]]
@@ -2594,7 +2595,7 @@ requires-dist = [
     { name = "pandas", specifier = "==3.1.1" },
     { name = "pip", specifier = ">=26.0.0" },
     { name = "prek", marker = "extra == 'dev'" },
-    { name = "presidio-analyzer", marker = "extra == 'presidio'", specifier = "==2.2.364" },
+    { name = "presidio-analyzer", marker = "extra == 'presidio'", specifier = "==2.2.366" },
     { name = "pyarrow", specifier = "==26.0.1" },
     { name = "pytest-asyncio", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
