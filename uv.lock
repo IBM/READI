@@ -2916,7 +2916,7 @@ requires-dist = [
     { name = "spacy", specifier = "==3.8.18" },
     { name = "sparqlwrapper", specifier = "==2.0.0" },
     { name = "stanza", marker = "extra == 'stanza'", specifier = "==1.15.0" },
-    { name = "tika", specifier = "==3.3.2" },
+    { name = "tika", specifier = "==3.4.0" },
     { name = "transformers", specifier = "==5.22.2" },
     { name = "ty", marker = "extra == 'dev'" },
     { name = "ucimlrepo", marker = "extra == 'dev'" },
@@ -3598,15 +3598,15 @@ wheels = [
 
 [[package]]
 name = "tika"
-version = "3.3.2"
+version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/22/26/102862348a6270b016ccecfae332bc6c18b7f020e5d158d07e15e8c11d52/tika-3.3.2.tar.gz", hash = "sha256:468a5302249162351f65cfe05632d3869c0350d726aef82a75e7b04fa5cac8ab", size = 31542, upload-time = "2026-08-01T19:11:36.101Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/69/76/6237b07e6218d2bf359cddc8f71857f463c59bd2681add910610a3f260fd/tika-3.4.0.tar.gz", hash = "sha256:5e8abcf100a612553a7b3167dd0811dfd7061de48b663b591e98131f7387b653", size = 41392, upload-time = "2026-11-09T21:52:40.562Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/bc/e82ec1adc1283cfc4e192376592c6f1c7982a205647ada75fd66932f9007/tika-3.3.2-py3-none-any.whl", hash = "sha256:fca2a8edb35cfdca0ef3e52420ca42d87754e6f388b24b729dbea48bf32f80a4", size = 28592, upload-time = "2026-08-01T19:11:35.012Z" },
+    { url = "https://files.pythonhosted.org/packages/85/22/dbf17a9b665000a062ff05bf9217ad47fdb2c8295960333bd006b4004c88/tika-3.4.0-py3-none-any.whl", hash = "sha256:b27fdff7911c3062375a43eb20ccc82146509e30a00d54ebca9af44c737f6461", size = 33243, upload-time = "2026-11-09T21:52:39.229Z" },
 ]
 
 [[package]]
