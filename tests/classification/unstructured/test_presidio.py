@@ -6,6 +6,7 @@ import time so these tests run regardless of whether the library is installed.
 
 import sys
 from types import ModuleType
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -87,10 +88,8 @@ def _make_extractor(**kwargs) -> PresidioEntityExtractor:
     return PresidioEntityExtractor(type_mapping=TYPE_MAPPING, **kwargs)
 
 
-RecognizerResult = _RecognizerResult
-
-
-def _stub_result(entity_type: str, start: int, end: int, score: float = 0.85) -> RecognizerResult:
+def _stub_result(entity_type: str, start: int, end: int, score: float = 0.85) -> Any:
+    """Return a stub standing in for presidio's RecognizerResult (typed Any: it is not the real class)."""
     return _RecognizerResult(entity_type=entity_type, start=start, end=end, score=score)
 
 
