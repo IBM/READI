@@ -51,7 +51,7 @@ dependencies = [
 ]
 [project.optional-dependencies]
 stanza = [
-  "stanza==1.15.0",
+  "stanza==1.15.1",
 ]
 rest = [
   "fastapi==0.162.5",

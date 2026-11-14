@@ -3,10 +3,10 @@ revision = 5
 requires-python = ">=3.11.5, <3.14"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version >= '3.12' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version >= '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -2602,7 +2602,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.17.1" },
     { name = "spacy", specifier = "==3.8.18" },
     { name = "sparqlwrapper", specifier = "==2.0.0" },
-    { name = "stanza", marker = "extra == 'stanza'", specifier = "==1.15.0" },
+    { name = "stanza", marker = "extra == 'stanza'", specifier = "==1.15.1" },
     { name = "tika", specifier = "==3.4.0" },
     { name = "transformers", specifier = "==5.22.2" },
     { name = "ty", marker = "extra == 'dev'" },
@@ -3159,7 +3159,7 @@ wheels = [
 
 [[package]]
 name = "stanza"
-version = "1.15.0"
+version = "1.15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "emoji" },
@@ -3175,9 +3175,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "udtools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7a/5a/a3e09cc6a5f2676ba0c5b548f580f47b1bc7877b0b334a9a6b338c349410/stanza-1.15.0.tar.gz", hash = "sha256:69f18af136ac5f88611f930af8dc37e89ae9e073e23860b3604bad9a941b44b2", size = 1790258, upload-time = "2026-10-01T05:46:45.952Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/4f/3db39770dc0bf6a4b64ab613dc469b42d702d76e0896457e7935272180fc/stanza-1.15.1.tar.gz", hash = "sha256:8e06adc99a0189df7f098288ce35636d9ec3181635a0dfdd56f858e1d1840db5", size = 1910900, upload-time = "2026-11-14T05:14:01.035Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/df/bc/78a8f73009619cf1bcbd2657c1966a64990ab9f78a59de785c0cf0f2923c/stanza-1.15.0-py3-none-any.whl", hash = "sha256:1da8a072de5ff82a9776016d87e1c09fe08b35336e5f8071b79dc324aece0c7a", size = 2041107, upload-time = "2026-10-01T05:46:40.872Z" },
+    { url = "https://files.pythonhosted.org/packages/12/9a/8d9df39ff75148c393c6f77df2ec9b6f904c5e39869f329e36b7bcc71147/stanza-1.15.1-py3-none-any.whl", hash = "sha256:15e9fc15fb964d2edd1d880eb6923dcd8b25ec5b162863231ade9619a0d7b065", size = 2182105, upload-time = "2026-11-14T05:13:56.887Z" },
 ]
 
 [[package]]
