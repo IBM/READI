@@ -54,7 +54,7 @@ stanza = [
   "stanza==1.15.1",
 ]
 rest = [
-  "fastapi==0.163.1",
+  "fastapi==0.163.2",
 ]
 # flair = [
 #   "flair>=0.15.1",
