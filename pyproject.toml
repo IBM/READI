@@ -38,7 +38,7 @@ dependencies = [
     "python-dotenv==1.2.4",
     "pytz==2026.6",
     "scipy>=1.17.1",
-    "spacy==3.8.18",
+    "spacy==3.8.20",
     "SPARQLWrapper==2.0.0",
     "tika==3.4.0",
     "transformers==5.23.0",
